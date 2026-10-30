@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+.instance_secret
+.venv*/
+venv/
+__pycache__/
+*.pyc
+*.db
+*.db-*
+uploads/
+logs/
+backups/
+.vscode/
+*.pem
+*.key

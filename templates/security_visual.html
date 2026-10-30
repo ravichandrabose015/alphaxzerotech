@@ -1,0 +1,30 @@
+<svg class="ax-dimensional-art" viewBox="0 0 360 340" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="axMetal" x2="1" y2="1"><stop stop-color="#dfffca"/><stop offset=".3" stop-color="#66cc33"/><stop offset="1" stop-color="#15532c"/></linearGradient>
+    <linearGradient id="axFace" x2="1" y2="1"><stop stop-color="#245b38"/><stop offset="1" stop-color="#061c14"/></linearGradient>
+  </defs>
+  <ellipse cx="180" cy="284" rx="132" ry="32" fill="#e5f4df"/>
+  <ellipse cx="180" cy="271" rx="132" ry="32" fill="url(#axMetal)"/>
+  <ellipse cx="180" cy="265" rx="113" ry="25" fill="#f5fff0" stroke="#80ce53"/>
+  <path d="M180 38 282 97v118l-102 59-102-59V97Z" fill="url(#axMetal)"/>
+  <path d="m180 54 86 50v101l-86 50-86-50V104Z" fill="url(#axFace)"/>
+  <path d="m180 54 86 50-86 50-86-50Z" fill="#ffffff" opacity=".08"/>
+  <g fill="none" stroke="#b5ff83" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+  {% if visual_kind == 'contact' %}
+    <path d="M124 128h112v76H124Z M124 128l56 43 56-43"/>
+    <path d="m180 168 21 10v18q0 19-21 30-21-11-21-30v-18Z" fill="#164f2b"/>
+    <path d="m170 195 8 8 15-17"/>
+  {% elif visual_kind == 'training' %}
+    <path d="m115 139 65-33 65 33-65 33Z M138 153v38q42 28 84 0v-38 M245 139v55"/>
+  {% elif visual_kind == 'resources' %}
+    <path d="M180 124q-31-22-61-8v83q31-14 61 8 30-22 61-8v-83q-30-14-61 8v83 M132 142l28 8 M200 150l28-8"/>
+  {% elif visual_kind == 'about' %}
+    <circle cx="180" cy="140" r="24"/><path d="M132 213v-16q0-27 48-27t48 27v16 M120 110l-13 9v32 M240 110l13 9v32"/>
+  {% elif visual_kind == 'services' %}
+    <path d="m133 113-20 20 30 30 20-20-30-30Z M163 163l56 56 23-23-56-56 M218 112l-30 30 M228 103l15 15"/>
+  {% else %}
+    <circle cx="180" cy="159" r="48"/><circle cx="180" cy="159" r="25"/><path d="M180 159l34-34 M180 99V88 M240 159h11 M180 219v11 M120 159h-11"/>
+  {% endif %}
+  </g>
+  <g fill="#66cc33"><circle cx="61" cy="140" r="6"/><circle cx="302" cy="184" r="5"/><circle cx="286" cy="67" r="4"/></g>
+</svg>

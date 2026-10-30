@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Send a secure cyber security enquiry to AlphaX ZeroTech.">
+  <title>Contact Our Security Experts | AlphaX ZeroTech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/system.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}?v=20260828-6">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/security_visual.css') }}?v=20261030-1">
+</head>
+<body class="public-system-page">
+  {% include "navbar.html" %}
+
+  <main>
+    <section class="contact-hero">
+      <div><span class="eyebrow">Secure Public Enquiry</span><h1>{{ content.get('page_title', 'Talk to Our Security Experts') }}</h1><p>{{ content.get('page_description', 'Send a secure enquiry and our cyber security team will contact you using your preferred method.') }}</p><div class="privacy-pills"><span>No User Login</span><span>No Registration</span><span>Encrypted Workflow</span></div></div>
+      <div class="hero-shield" aria-hidden="true">{% with visual_kind='contact' %}{% include 'security_visual.html' %}{% endwith %}<span>Enterprise-grade enquiry protection</span></div>
+    </section>
+
+    <section class="enquiry-layout">
+      <aside class="contact-aside">
+        <span class="eyebrow">AlphaX ZeroTech</span><h2>Start a security conversation.</h2><p>Share your requirements through our protected form. Your enquiry is logged securely and is visible only to authorized administrators.</p>
+        <div class="assurance-list"><div><b>01</b><span><strong>Secure Submission</strong>Your enquiry is validated and protected.</span></div><div><b>02</b><span><strong>Expert Review</strong>Our security team reviews your requirements.</span></div><div><b>03</b><span><strong>Private Follow-up</strong>We respond using your preferred method.</span></div></div>
+      </aside>
+
+      <div class="form-card">
+        <div class="form-heading"><div><span class="eyebrow">Public Enquiry Form</span><h2>How can we protect your business?</h2></div><span class="secure-badge">Secure</span></div>
+        {% with messages = get_flashed_messages(with_categories=true) %}{% for category, message in messages %}<div class="alert {{ category }}">{{ message }}</div>{% endfor %}{% endwith %}
+        <form method="post" novalidate>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input class="honeypot" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="form-grid">
+            <label>Full Name <em>*</em><input name="full_name" maxlength="100" autocomplete="name" value="{{ values.get('full_name', '') }}" required>{% if errors.full_name %}<small>{{ errors.full_name }}</small>{% endif %}</label>
+            <label>Company Name <span>(Optional)</span><input name="company_name" maxlength="120" autocomplete="organization" value="{{ values.get('company_name', '') }}"></label>
+            <label>Email Address <em>*</em><input type="email" name="email_address" maxlength="254" autocomplete="email" value="{{ values.get('email_address', '') }}" required>{% if errors.email_address %}<small>{{ errors.email_address }}</small>{% endif %}</label>
+            <label>Phone Number <em>*</em><input type="tel" name="phone_number" maxlength="24" autocomplete="tel" value="{{ values.get('phone_number', '') }}" required>{% if errors.phone_number %}<small>{{ errors.phone_number }}</small>{% endif %}</label>
+            <label>Country <em>*</em><input name="country" maxlength="80" autocomplete="country-name" value="{{ values.get('country', '') }}" required>{% if errors.country %}<small>{{ errors.country }}</small>{% endif %}</label>
+            <label>Service Interested <em>*</em><select name="service_interested" required><option value="">Select a service</option>{% for service in services %}<option {% if values.get('service_interested') == service %}selected{% endif %}>{{ service }}</option>{% endfor %}</select>{% if errors.service_interested %}<small>{{ errors.service_interested }}</small>{% endif %}</label>
+            <label class="wide">Subject <em>*</em><input name="subject" maxlength="160" value="{{ values.get('subject', '') }}" required>{% if errors.subject %}<small>{{ errors.subject }}</small>{% endif %}</label>
+            <label class="wide">Message <em>*</em><textarea name="message" maxlength="5000" rows="6" required>{{ values.get('message', '') }}</textarea>{% if errors.message %}<small>{{ errors.message }}</small>{% endif %}</label>
+            <label>Preferred Contact Method <em>*</em><select name="preferred_contact_method" required><option value="">Select method</option>{% for method in contact_methods %}<option {% if values.get('preferred_contact_method') == method %}selected{% endif %}>{{ method }}</option>{% endfor %}</select>{% if errors.preferred_contact_method %}<small>{{ errors.preferred_contact_method }}</small>{% endif %}</label>
+            <label>Preferred Contact Time <em>*</em><select name="preferred_contact_time" required><option value="">Select time</option>{% for time in contact_times %}<option {% if values.get('preferred_contact_time') == time %}selected{% endif %}>{{ time }}</option>{% endfor %}</select>{% if errors.preferred_contact_time %}<small>{{ errors.preferred_contact_time }}</small>{% endif %}</label>
+          </div>
+          <button class="submit-enquiry" type="submit">Submit Enquiry <span>&rarr;</span></button>
+          <p class="form-note">By submitting, you authorize AlphaX ZeroTech to contact you regarding this enquiry. No public account is created.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+  <footer class="system-footer"><span>&copy; {{ now_year }} AlphaX ZeroTech. All rights reserved.</span></footer>
+  <script src="{{ url_for('static', filename='js/navbar.js') }}?v=20260828-1" defer></script>
+</body>
+</html>

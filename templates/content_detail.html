@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}{{ item.title }} | AlphaX ZeroTech{% endblock %}
+{% block page_name %}{{ item.module }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/content_hub.css') }}?v=20260828-1">{% endblock %}
+{% block content %}
+{% set list_endpoint = 'content_hub.threats' if item.module=='threat' else 'content_hub.resources' if item.module=='resource' else 'content_hub.training' %}
+<article class="detail-page">
+  <header class="detail-hero">
+    {% if item.banner_path %}<img src="{{ url_for('content_hub.media',relative_path=item.banner_path) }}" alt="" class="detail-banner">{% endif %}
+    <div class="detail-overlay"></div><div class="container detail-hero-content"><a href="{{ url_for(list_endpoint) }}">&larr; {{ module_config.title }}</a><div class="detail-labels"><span>{{ item.category }}</span>{% if item.severity %}<span class="severity-{{ item.severity }}">{{ item.severity|title }}</span>{% endif %}{% if item.difficulty %}<span>{{ item.difficulty|title }}</span>{% endif %}</div><h1>{{ item.title }}</h1><p>{{ item.short_description }}</p><div class="detail-byline"><span>{{ item.author_name or item.metadata.get('instructor') or 'AlphaX ZeroTech' }}</span><span>{{ item.published_at.strftime('%d %B %Y') if item.published_at else '' }}</span><span>{{ item.view_count + 1 }} views</span></div></div>
+  </header>
+
+  <div class="container detail-layout">
+    <main class="detail-main">
+      <section><h2>Overview</h2>{% for paragraph in item.full_description.split('\n') %}{% if paragraph.strip() %}<p>{{ paragraph }}</p>{% endif %}{% endfor %}</section>
+      {% for key, value in item.metadata.items() %}{% if value and key not in ['seo_title','seo_description','download_enabled'] %}<section id="{{ key|replace('_','-') }}"><h2>{{ key|replace('_',' ')|title }}</h2>{% if '\n' in value|string %}{% for line in (value|string).split('\n') %}{% if line.strip() %}<p>{{ line }}</p>{% endif %}{% endfor %}{% else %}<p>{{ value }}</p>{% endif %}</section>{% endif %}{% endfor %}
+
+      {% set assets=item.asset_paths or {} %}
+      {% if item.module in ['training','resource'] and assets.get('videos') %}<section><h2>{{ 'Course Videos' if item.module=='training' else 'Resource Videos' }}</h2><div class="video-list">{% for asset in assets.videos %}<video controls preload="metadata"><source src="{{ url_for('content_hub.view_asset',module=item.module,slug=item.slug,asset_key='videos',index=loop.index0) }}"></video>{% endfor %}</div></section>{% endif %}
+      {% if assets.get('gallery') or assets.get('screenshots') %}<section><h2>Gallery & Screenshots</h2><div class="detail-gallery">{% for asset in assets.get('gallery',[]) + assets.get('screenshots',[]) %}<img src="{{ url_for('content_hub.media',relative_path=asset.path if asset is mapping else asset) }}" alt="{{ item.title }} visual" loading="lazy">{% endfor %}</div></section>{% endif %}
+      {% if item.module=='resource' and assets.get('resource_file') and assets.resource_file.name.lower().endswith('.pdf') %}<section><h2>PDF Viewer</h2><iframe class="pdf-viewer" title="{{ item.title }} PDF" src="{{ url_for('content_hub.view_asset',module=item.module,slug=item.slug,asset_key='resource_file',index=0) }}"></iframe></section>{% endif %}
+    </main>
+
+    <aside class="detail-sidebar">
+      <div class="detail-action-panel"><span class="hub-kicker">Published Content</span><h2>{{ 'Course Access' if item.module=='training' else 'Available Files' }}</h2>
+        {% if item.metadata.get('discount_price') %}<strong class="detail-price">{{ item.currency }} {{ item.metadata.get('discount_price') }}</strong><small>Standard price {{ item.currency }} {{ '%.2f'|format(item.price_cents/100) }}</small>{% elif item.price_cents %}<strong class="detail-price">{{ item.currency }} {{ '%.2f'|format(item.price_cents/100) }}</strong>{% else %}<strong class="detail-price">Free</strong>{% endif %}
+        {% for key in ['report_pdf','ioc_file','resource_file','supporting_files','course_notes','assignments','lab_files','course_resources','certificate_template'] %}{% set value=(item.asset_paths or {}).get(key) %}{% if value %}{% set records=value if value is sequence and value is not string and value is not mapping else [value] %}{% for asset in records %}<a class="hub-button wide" href="{{ url_for('content_hub.download',module=item.module,slug=item.slug,asset_key=key,index=loop.index0) }}">{{ asset.name if asset is mapping else key|replace('_',' ')|title }}</a>{% endfor %}{% endif %}{% endfor %}
+        {% if item.module=='training' %}<a class="hub-button wide outline" href="{{ url_for('contact.index',course=item.title,intent='enroll') }}">{{ 'Buy Now' if item.price_cents else 'Enroll' }}</a>{% endif %}
+      </div>
+      <div class="detail-facts"><h3>Content Details</h3><dl><dt>Category</dt><dd>{{ item.category }}</dd>{% if item.version %}<dt>Version</dt><dd>{{ item.version }}</dd>{% endif %}{% if item.difficulty %}<dt>Level</dt><dd>{{ item.difficulty|title }}</dd>{% endif %}<dt>Access</dt><dd>{{ item.access_type|title }}</dd><dt>Updated</dt><dd>{{ item.updated_at.strftime('%d %b %Y') }}</dd></dl><div class="hub-tags">{% for tag in item.tags %}<a href="{{ url_for(list_endpoint,tag=tag) }}">{{ tag }}</a>{% endfor %}</div></div>
+    </aside>
+  </div>
+
+  {% if related %}<section class="related-content"><div class="container"><div class="hub-heading"><div><span class="hub-kicker">Continue Exploring</span><h2>Related Content</h2></div></div><div class="hub-grid">{% for related_item in related %}<article class="hub-card compact"><div class="hub-card-body"><span>{{ related_item.category }}</span><h3>{{ related_item.title }}</h3><p>{{ related_item.short_description }}</p><a class="hub-text-link" href="{{ url_for('content_hub.threat_detail' if item.module=='threat' else 'content_hub.resource_detail' if item.module=='resource' else 'content_hub.training_detail',slug=related_item.slug) }}">View details &rarr;</a></div></article>{% endfor %}</div></div></section>{% endif %}
+</article>
+{% endblock %}

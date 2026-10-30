@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}{{ module_title }} | AlphaX ZeroTech{% endblock %}
+{% block page_name %}{{ module }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/content_hub.css') }}?v=20260828-1">{% endblock %}
+{% block content %}
+<section class="hub-hero hub-hero--{{ module }}">
+  <div class="container hub-hero-grid">
+    <div><span class="hub-kicker">Admin-Published Intelligence</span><h1>{% block hero_title %}{{ module_title }}{% endblock %}</h1><p>{% block hero_text %}{% endblock %}</p><a class="hub-button" href="#content-library">Explore Published Content</a></div>
+    <div class="hub-shield" aria-hidden="true">{% with visual_kind=module %}{% include 'security_visual.html' %}{% endwith %}</div>
+  </div>
+</section>
+
+<section class="hub-library" id="content-library">
+  <div class="container">
+    <div class="hub-heading"><div><span class="hub-kicker">Dynamic Content Library</span><h2>Published {{ module_title }}</h2></div><a class="hub-search-link" href="{{ url_for('content_hub.search') }}">Search all modules &rarr;</a></div>
+    <form class="hub-filters" method="get">
+      <label class="hub-search"><span>Search</span><input name="q" value="{{ query }}" placeholder="Search title, topic or description"></label>
+      <label><span>Category</span><select name="category"><option value="">All categories</option>{% for row in categories %}<option value="{{ row.category }}" {% if selected_category==row.category %}selected{% endif %}>{{ row.category }} ({{ row.item_count }})</option>{% endfor %}</select></label>
+      <label><span>Tag</span><select name="tag"><option value="">All tags</option>{% for row in tags %}<option value="{{ row.tag }}" {% if selected_tag==row.tag %}selected{% endif %}>{{ row.tag }} ({{ row.item_count }})</option>{% endfor %}</select></label>
+      {% if module=='threat' %}<label><span>Severity</span><select name="severity"><option value="">All severity</option>{% for value in ['critical','high','medium','low','informational'] %}<option value="{{ value }}" {% if filters.severity==value %}selected{% endif %}>{{ value|title }}</option>{% endfor %}</select></label>{% endif %}
+      {% if module=='threat' %}<label><span>CVSS</span><input name="cvss" value="{{ filters.cvss }}" placeholder="e.g. 9.8"></label>{% endif %}
+      {% if module=='training' %}<label><span>Difficulty</span><select name="difficulty"><option value="">All levels</option>{% for value in ['beginner','intermediate','advanced','expert'] %}<option value="{{ value }}" {% if filters.difficulty==value %}selected{% endif %}>{{ value|title }}</option>{% endfor %}</select></label>{% endif %}
+      {% if module in ['resource','training'] %}<label><span>Access</span><select name="access"><option value="">All access</option>{% for value in ['free','premium','paid'] %}<option value="{{ value }}" {% if filters.access_type==value %}selected{% endif %}>{{ value|title }}</option>{% endfor %}</select></label>{% endif %}
+      <label><span>Published Since</span><input type="date" name="date_from" value="{{ filters.date_from }}"></label>
+      <label><span>Featured</span><select name="featured"><option value="">All content</option><option value="1" {% if filters.featured %}selected{% endif %}>Featured only</option></select></label>
+      <label><span>Sort</span><select name="sort"><option value="latest" {% if selected_sort=='latest' %}selected{% endif %}>Latest</option><option value="popular" {% if selected_sort=='popular' %}selected{% endif %}>Popular</option><option value="title" {% if selected_sort=='title' %}selected{% endif %}>A–Z</option>{% if module=='threat' %}<option value="critical" {% if selected_sort=='critical' %}selected{% endif %}>Critical first</option>{% endif %}</select></label>
+      <button type="submit">Apply Filters</button>
+    </form>
+
+    {% if collections %}<div class="hub-collections">{% for collection_label,collection_items in collections %}<section><h3>{{ collection_label }}</h3><div class="hub-collection-row">{% for item in collection_items %}<a href="{% if module=='threat' %}{{ url_for('content_hub.threat_detail',slug=item.slug) }}{% elif module=='resource' %}{{ url_for('content_hub.resource_detail',slug=item.slug) }}{% else %}{{ url_for('content_hub.training_detail',slug=item.slug) }}{% endif %}"><span>{{ item.category }}</span><strong>{{ item.title }}</strong><small>{{ item.short_description|truncate(105) }}</small></a>{% endfor %}</div></section>{% endfor %}</div>{% endif %}
+
+    {% if items %}
+    <div class="hub-grid">
+      {% for item in items %}
+      <article class="hub-card">
+        <a class="hub-card-media" href="{% if module=='threat' %}{{ url_for('content_hub.threat_detail',slug=item.slug) }}{% elif module=='resource' %}{{ url_for('content_hub.resource_detail',slug=item.slug) }}{% else %}{{ url_for('content_hub.training_detail',slug=item.slug) }}{% endif %}">
+          {% if item.thumbnail_path %}<img src="{{ url_for('content_hub.media',relative_path=item.thumbnail_path) }}" alt="{{ item.title }}" loading="lazy">{% else %}<span class="hub-card-placeholder" aria-hidden="true">AX</span>{% endif %}
+          {% if item.severity %}<span class="hub-badge severity-{{ item.severity }}">{{ item.severity }}</span>{% elif item.access_type %}<span class="hub-badge">{{ item.access_type }}</span>{% endif %}
+        </a>
+        <div class="hub-card-body"><div class="hub-card-meta"><span>{{ item.category }}</span><span>{{ item.published_at.strftime('%d %b %Y') if item.published_at else 'Scheduled' }}</span></div><h3>{{ item.title }}</h3><p>{{ item.short_description }}</p><div class="hub-tags">{% for tag in item.tags[:3] %}<a href="?tag={{ tag|urlencode }}">{{ tag }}</a>{% endfor %}</div><a class="hub-text-link" href="{% if module=='threat' %}{{ url_for('content_hub.threat_detail',slug=item.slug) }}{% elif module=='resource' %}{{ url_for('content_hub.resource_detail',slug=item.slug) }}{% else %}{{ url_for('content_hub.training_detail',slug=item.slug) }}{% endif %}">{% if module=='training' %}View Course{% elif module=='resource' %}View Resource{% else %}Read Intelligence{% endif %} &rarr;</a></div>
+      </article>
+      {% endfor %}
+    </div>
+    {% if total_pages > 1 %}<nav class="hub-pagination" aria-label="Content pages">{% for number in range(1,total_pages+1) %}<a class="{% if number==current_page %}active{% endif %}" href="?q={{ query|urlencode }}&category={{ selected_category|urlencode }}&tag={{ selected_tag|urlencode }}&sort={{ selected_sort }}&severity={{ filters.severity }}&difficulty={{ filters.difficulty }}&access={{ filters.access_type }}&featured={{ filters.featured }}&date_from={{ filters.date_from }}&cvss={{ filters.cvss }}&page={{ number }}">{{ number }}</a>{% endfor %}</nav>{% endif %}
+    {% else %}
+    <div class="hub-empty"><div class="hub-empty-art" aria-hidden="true"><span></span></div><h2>No Content Available Yet</h2><p>New content will be published soon.</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

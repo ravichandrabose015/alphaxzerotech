@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Meet Ravichandran B, Founder and Owner of AlphaX ZeroTech.">
+  <title>About Us | AlphaX ZeroTech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}?v=20260828-2">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}?v=20260828-6">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/security_visual.css') }}?v=20261030-1">
+</head>
+<body>
+  <svg class="svg-definitions" aria-hidden="true">
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4.5 5v5.7c0 4.8 3.1 9.2 7.5 10.8 4.4-1.6 7.5-6 7.5-10.8V5L12 2Z"/><path d="m8.4 12 2.2 2.2 5-5"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M22 12h-3M12 22v-3M2 12h3"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M10.5 7.5v6M7.5 10.5h6"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16"/></symbol>
+    <symbol id="i-consult" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c.5-4 2.3-6 5.5-6s5 2 5.5 6M17 8l1.5 1.5L21 7"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M7 18h10M8 18v-4a4 4 0 0 1 8 0v4M12 2v3M4 7l2 2M20 7l-2 2M5 21h14"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></symbol>
+    <symbol id="i-network" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-4h12v4"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M7 11l2-2 2 2 4-4 2 2"/></symbol>
+    <symbol id="i-bot" viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="12" rx="3"/><path d="M12 3v4M9 12h.01M15 12h.01M9 16h6M10 3h4"/></symbol>
+    <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18h11a4 4 0 0 0 0-8h-.5A6 6 0 0 0 6 8.5 4.8 4.8 0 0 0 7 18Z"/><path d="M11 12v5M14 12l-3 5-3-5"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-5 3.5-7 8-7s7.2 2 8 7"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 4h16v12H9l-5 4V4Z"/><path d="M8 9h8M8 12h5"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="m13 2-8 12h6l-1 8 9-13h-6V2Z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></symbol>
+    <symbol id="i-support" viewBox="0 0 24 24"><path d="M4 13v-2a8 8 0 0 1 16 0v2M4 13H2v5h4v-5H4ZM20 13h2v5h-4v-5h2ZM18 19c-1 2-3 2-5 2"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M7 3 4 5c0 8 7 15 15 15l2-3-4-3-2 2c-3-1-6-4-7-7l2-2-3-4Z"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></symbol>
+  </svg>
+
+  {% include "navbar.html" %}
+
+  <main>
+    <section class="hero page-shell" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="section-kicker">About Us</p>
+        <h1 id="hero-title">Founder. Visionary.<br><span>Cybersecurity Expert.</span></h1>
+        <p>I am <strong>Ravichandran B</strong>, Founder &amp; Owner of AlphaX ZeroTech.<br>I help organizations identify vulnerabilities, strengthen their security posture and build a safer digital world.</p>
+        <div class="button-row"><a class="button primary" href="{{ url_for('contact.index') }}">Contact Me <span>→</span></a><a class="button secondary" href="{{ url_for('services.index') }}">My Services <span>→</span></a></div>
+        <div class="hero-socials"><a href="mailto:alphaxzerotech@gmail.com" aria-label="Email AlphaX ZeroTech"><svg><use href="#i-mail"/></svg></a></div>
+      </div>
+      <div class="hero-art">
+        <div class="portrait-wrap"><img src="{{ url_for('static', filename='images/about-founder-transparent.png') }}" alt="Ravichandran B, Founder and Owner of AlphaX ZeroTech"></div>
+        <div class="shield-graphic">{% with visual_kind='about' %}{% include 'security_visual.html' %}{% endwith %}</div>
+      </div>
+    </section>
+
+    <section class="founder-panel page-shell" aria-labelledby="founder-name">
+      <div class="founder-details">
+        <span class="founder-badge"><svg><use href="#i-shield"/></svg></span>
+        <div><p class="section-kicker">Founder &amp; Owner</p><h2 id="founder-name">Ravichandran B</h2><p class="founder-role">Cybersecurity Analyst | Ethical Hacker | VAPT Specialist</p>
+          <ul class="contact-list">
+            <li><svg><use href="#i-pin"/></svg><span>Rajapalayam, Tamil Nadu, India</span></li><li><svg><use href="#i-mail"/></svg><a href="mailto:alphaxzerotech@gmail.com">alphaxzerotech@gmail.com</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="about-me"><p class="section-kicker">About Me</p><p>Cybersecurity enthusiast with hands-on experience in penetration testing, vulnerability assessment, web application security and network security. I am passionate about learning, solving real-world security challenges and contributing to a safer digital ecosystem.</p></div>
+    </section>
+
+    <section class="services-section page-shell" aria-labelledby="services-title">
+      <div class="section-heading"><p class="section-kicker">What I Do</p><h2 id="services-title">Securing Businesses, Protecting Digital Future</h2></div>
+      <div class="service-grid">
+        <article><svg><use href="#i-shield"/></svg><h3>Security Assessments</h3><p>Identify security weaknesses and assess risk in your systems and infrastructure.</p></article>
+        <article><svg><use href="#i-target"/></svg><h3>Penetration Testing</h3><p>Simulate real-world attacks to find vulnerabilities before attackers do.</p></article>
+        <article><svg><use href="#i-search"/></svg><h3>Vulnerability Scanning</h3><p>Automated scanning to detect and prioritize security vulnerabilities.</p></article>
+        <article><svg><use href="#i-code"/></svg><h3>Secure Code Review</h3><p>Review code for security flaws and ensure secure development practices.</p></article>
+        <article><svg><use href="#i-consult"/></svg><h3>Security Consulting</h3><p>Strategic security guidance to strengthen your overall security posture.</p></article>
+        <article><svg><use href="#i-alert"/></svg><h3>Incident Response</h3><p>Detect, respond and mitigate security incidents quickly and effectively.</p></article>
+      </div>
+    </section>
+
+    <section class="expertise-section page-shell" aria-labelledby="expertise-title">
+      <div class="section-heading"><p class="section-kicker">My Expertise</p><h2 id="expertise-title">Skills. Tools. Technologies.</h2></div>
+      <div class="expertise-grid">
+        <article><svg><use href="#i-shield"/></svg><h3>Penetration Testing</h3><p>Kali Linux, Metasploit, Nmap, Nessus, SQLMap, Hydra, Nikto, Aircrack-ng</p></article>
+        <article><svg><use href="#i-globe"/></svg><h3>Web Application Security</h3><p>OWASP Top 10, Burp Suite, ZAP, XSS, SQLi, CSRF, IDOR, API Testing</p></article>
+        <article><svg><use href="#i-network"/></svg><h3>Network Security</h3><p>Wireshark, Firewalls, IDS/IPS, TCP/IP, DNS, HTTP/HTTPS, VPN, OSI Model</p></article>
+        <article><svg><use href="#i-monitor"/></svg><h3>SIEM &amp; Monitoring</h3><p>Splunk, Log Analysis, Alert Monitoring, Incident Detection, Dashboards</p></article>
+        <article><svg><use href="#i-bot"/></svg><h3>Security Automation</h3><p>Python Scripting, Bash, Automation Tools, Custom Security Solutions</p></article>
+        <article><svg><use href="#i-cloud"/></svg><h3>Linux &amp; Cloud</h3><p>Linux (Kali, Ubuntu), AWS EC2, Windows, Server Administration</p></article>
+      </div>
+    </section>
+
+    <section class="purpose-section page-shell" aria-label="Mission and vision">
+      <article><span class="purpose-icon"><svg><use href="#i-target"/></svg></span><div><h2>My Mission</h2><p>To help organizations strengthen their digital security by identifying vulnerabilities, assessing risks and providing practical security solutions. I am committed to building a secure digital world through knowledge, innovation and continuous learning.</p></div></article>
+      <article><span class="purpose-icon"><svg><use href="#i-eye"/></svg></span><div><h2>My Vision</h2><p>To become a trusted cybersecurity expert and a leading force in cybersecurity services, helping businesses of all sizes stay secure in an evolving digital landscape through ethical practices and advanced security solutions.</p></div></article>
+    </section>
+
+    <section class="why-section page-shell" aria-labelledby="why-title">
+      <div class="section-heading"><p class="section-kicker">Why Choose AlphaX ZeroTech</p><h2 id="why-title">Your Security is My Priority</h2></div>
+      <div class="why-grid">
+        <article><svg><use href="#i-user"/></svg><h3>Personalized Approach</h3><p>Direct and personal attention for every client.</p></article><article><svg><use href="#i-message"/></svg><h3>Transparent Process</h3><p>Clear communication and transparent methodologies.</p></article><article><svg><use href="#i-shield"/></svg><h3>Fast Response</h3><p>Quick turnaround and fast incident response.</p></article><article><svg><use href="#i-code"/></svg><h3>Modern Techniques</h3><p>Using latest tools and industry best practices.</p></article><article><svg><use href="#i-lock"/></svg><h3>Confidential &amp; Trusted</h3><p>Your data and privacy are always protected.</p></article><article><svg><use href="#i-support"/></svg><h3>Continuous Support</h3><p>Support even after the engagement is complete.</p></article>
+      </div>
+    </section>
+
+    <section class="cta page-shell">
+      <div><h2>Ready to Secure Your Business?</h2><p>Let’s work together to protect your digital assets and build a stronger, safer and more secure future.</p></div>
+      <div class="button-row"><a class="button primary" href="{{ url_for('contact.index') }}">Request Consultation <span>→</span></a><a class="button outline" href="{{ url_for('contact.index') }}">Contact Me <span>→</span></a></div>
+      <svg class="cta-shield"><use href="#i-lock"/></svg>
+    </section>
+  </main>
+
+  <footer class="minimal-footer page-shell"><p>© {{ now_year }} AlphaX ZeroTech. All rights reserved.</p><div><a href="#">Privacy Policy</a><a href="#">Terms of Service</a></div></footer>
+  <script src="{{ url_for('static', filename='js/navbar.js') }}?v=20260828-1" defer></script>
+</body>
+</html>

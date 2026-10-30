@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Browse published AlphaX ZeroTech security tools.">
+  <title>Security Tools Marketplace | AlphaX ZeroTech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/marketplace.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}?v=20260828-6">
+</head>
+<body class="marketplace-page">
+  {% include "navbar.html" %}
+  <main>
+    <section class="market-hero"><div><span class="market-label">Admin-Published Catalog</span><h1>Security Tools <span>Marketplace</span></h1><p>Explore security products published and maintained directly by AlphaX ZeroTech administrators.</p></div><div class="market-orbit" aria-hidden="true"><span></span><i></i><b></b></div></section>
+    <section class="market-content">
+      <form class="market-filters" method="get"><label><span>Search marketplace</span><input name="q" value="{{ query }}" placeholder="Search tools, categories or capabilities"></label><label><span>Category</span><select name="category"><option value="">All published categories</option>{% for item in categories %}<option value="{{ item.category }}" {% if selected_category==item.category %}selected{% endif %}>{{ item.category }} ({{ item.tool_count }})</option>{% endfor %}</select></label><label><span>Sort</span><select name="sort"><option value="latest" {% if selected_sort=='latest' %}selected{% endif %}>Latest</option><option value="popular" {% if selected_sort=='popular' %}selected{% endif %}>Popular</option><option value="price_low" {% if selected_sort=='price_low' %}selected{% endif %}>Price: Low to High</option><option value="price_high" {% if selected_sort=='price_high' %}selected{% endif %}>Price: High to Low</option><option value="name" {% if selected_sort=='name' %}selected{% endif %}>Name A-Z</option></select></label><button type="submit">Apply Filters</button></form>
+      {% if tools %}
+      <div class="market-meta"><div><span class="market-label">Published Tools</span><h2>Security capabilities ready for your business</h2></div><strong>{{ tools|length }} result{{ '' if tools|length == 1 else 's' }}</strong></div>
+      <div class="tool-grid">{% for tool in tools %}<article class="tool-card"><a class="tool-thumb" href="{{ url_for('security_tools.product',slug=tool.slug) }}"><img src="{{ url_for('security_tools.media',relative_path=tool.thumbnail_path) }}" alt="{{ tool.name }} thumbnail" loading="lazy">{% if tool.is_featured %}<span>Featured</span>{% endif %}</a><div class="tool-card-body"><div class="tool-card-meta"><span>{{ tool.category }}</span><span>v{{ tool.version }}</span></div><h2><a href="{{ url_for('security_tools.product',slug=tool.slug) }}">{{ tool.name }}</a></h2><p>{{ tool.short_description }}</p><div class="tool-card-footer"><strong>{{ 'Free' if tool.price_cents == 0 else (tool.currency ~ ' ' ~ '%.2f'|format(tool.price_cents / 100)) }}</strong><a href="{{ url_for('security_tools.product',slug=tool.slug) }}">View Details &rarr;</a></div></div></article>{% endfor %}</div>
+      {% else %}
+      <section class="market-empty" aria-labelledby="empty-title"><div class="empty-illustration" aria-hidden="true"><svg viewBox="0 0 180 180"><path d="M90 14 151 38v42c0 42-22 68-61 87-39-19-61-45-61-87V38l61-24Z"/><path d="M58 83h64M72 63h36M70 104h40"/><circle cx="90" cy="83" r="8"/></svg></div><span class="market-label">Marketplace Catalog</span><h2 id="empty-title">No Security Tools Available Yet</h2><p>{% if query or selected_category %}No published tools match the selected search or category. Try clearing the filters.{% else %}Our security team is preparing new tools. Published products will appear here automatically as soon as they become available.{% endif %}</p>{% if query or selected_category %}<a href="{{ url_for('security_tools.marketplace') }}">Clear Filters</a>{% endif %}</section>
+      {% endif %}
+    </section>
+  </main>
+  <footer class="market-footer"><div class="market-brand"><img src="{{ url_for('static',filename='images/logo.png') }}" alt=""><span><b>AlphaX</b> ZeroTech</span></div><p>Enterprise cyber security tools managed through a private administrator-controlled marketplace.</p><span>&copy; {{ now_year }} AlphaX ZeroTech</span></footer>
+  <script src="{{ url_for('static', filename='js/navbar.js') }}?v=20260828-1" defer></script>
+</body></html>
