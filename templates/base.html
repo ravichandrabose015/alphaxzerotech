@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="AlphaX ZeroTech enterprise cyber security services.">
   <title>{% block title %}AlphaX ZeroTech{% endblock %}</title>
-  <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20260828-2">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20261031-footer-logo">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}?v=20260828-6">
   {% block head %}{% endblock %}
+  {% include 'brand_head.html' %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}?v=20261031">
 </head>
 <body data-page="{% block page_name %}{% endblock %}">
   {% include "navbar.html" %}
@@ -24,7 +25,7 @@
     <div class="container footer-grid">
       <div class="footer-brand">
         <a class="brand brand--footer" href="{{ url_for('home.index') }}">
-          <span class="brand-logo"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="AlphaX ZeroTech official logo"></span>
+          <span class="brand-logo"><img src="{{ url_for('static', filename='images/logo-transparent.png') }}" alt="AlphaX ZeroTech official logo"></span>
           <span class="brand-copy"><strong>AlphaX</strong><span>ZeroTech</span></span>
         </a>
         <p>Enterprise cyber security engineered to protect your business, data, and digital future.</p>

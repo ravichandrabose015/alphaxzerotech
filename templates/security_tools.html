@@ -8,11 +8,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/marketplace.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}?v=20260828-6">
+  {% include 'brand_head.html' %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}?v=20261031">
 </head>
 <body class="marketplace-page">
   {% include "navbar.html" %}
   <main>
-    <section class="market-hero"><div><span class="market-label">Admin-Published Catalog</span><h1>Security Tools <span>Marketplace</span></h1><p>Explore security products published and maintained directly by AlphaX ZeroTech administrators.</p></div><div class="market-orbit" aria-hidden="true"><span></span><i></i><b></b></div></section>
+    <section class="market-hero"><div><span class="market-label">Admin-Published Catalog</span><h1>Security Tools <span>Marketplace</span></h1><p>Explore security products published and maintained directly by AlphaX ZeroTech administrators.</p></div><div class="market-orbit" aria-hidden="true">{% with visual_kind='services' %}{% include 'security_visual.html' %}{% endwith %}</div></section>
     <section class="market-content">
       <form class="market-filters" method="get"><label><span>Search marketplace</span><input name="q" value="{{ query }}" placeholder="Search tools, categories or capabilities"></label><label><span>Category</span><select name="category"><option value="">All published categories</option>{% for item in categories %}<option value="{{ item.category }}" {% if selected_category==item.category %}selected{% endif %}>{{ item.category }} ({{ item.tool_count }})</option>{% endfor %}</select></label><label><span>Sort</span><select name="sort"><option value="latest" {% if selected_sort=='latest' %}selected{% endif %}>Latest</option><option value="popular" {% if selected_sort=='popular' %}selected{% endif %}>Popular</option><option value="price_low" {% if selected_sort=='price_low' %}selected{% endif %}>Price: Low to High</option><option value="price_high" {% if selected_sort=='price_high' %}selected{% endif %}>Price: High to Low</option><option value="name" {% if selected_sort=='name' %}selected{% endif %}>Name A-Z</option></select></label><button type="submit">Apply Filters</button></form>
       {% if tools %}
@@ -23,6 +25,6 @@
       {% endif %}
     </section>
   </main>
-  <footer class="market-footer"><div class="market-brand"><img src="{{ url_for('static',filename='images/logo.png') }}" alt=""><span><b>AlphaX</b> ZeroTech</span></div><p>Enterprise cyber security tools managed through a private administrator-controlled marketplace.</p><span>&copy; {{ now_year }} AlphaX ZeroTech</span></footer>
+  <footer class="market-footer"><div class="market-brand"><img src="{{ url_for('static',filename='images/logo-transparent.png') }}" alt=""><span><b>AlphaX</b> ZeroTech</span></div><p>Enterprise cyber security tools managed through a private administrator-controlled marketplace.</p><span>&copy; {{ now_year }} AlphaX ZeroTech</span></footer>
   <script src="{{ url_for('static', filename='js/navbar.js') }}?v=20260828-1" defer></script>
 </body></html>

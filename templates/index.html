@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="AlphaX ZeroTech enterprise cyber security services.">
   <title>AlphaX ZeroTech | Enterprise Cyber Security</title>
-  <link rel="icon" href="../static/images/logo.png?v=official-20260807" type="image/png">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}?v=20260828-6">
   <style>
     :root {
@@ -355,8 +354,10 @@
     }
   </style>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/content_hub.css') }}?v=20260828-1">
+  {% include 'brand_head.html' %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}?v=20261031">
 </head>
-<body>
+<body class="ax-home">
   <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true" focusable="false">
     <defs>
       <symbol id="icon-security-team" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><path d="M3.5 18v-2.2A4.8 4.8 0 0 1 8.3 11h1.4c1.2 0 2.4.5 3.3 1.3M15.5 7.5a2.5 2.5 0 1 1 2.2 4.5"/><path d="M17 12.5 21 14v2.8c0 2-1.3 3.3-4 4.7-2.7-1.4-4-2.7-4-4.7V14l4-1.5Z"/><path d="m15.5 17 1 1 2-2"/></symbol>
@@ -381,7 +382,7 @@
   </svg>
   <div class="page-loader" id="pageLoader" aria-hidden="true">
     <div class="loader-inner">
-      <img src="../static/images/logo.png?v=official-20260807" alt="">
+      <img src="../static/images/logo-transparent.png?v=transparent-20261031" alt="">
       <span class="loader-line"></span>
     </div>
   </div>
@@ -396,7 +397,7 @@
           <h1>{{ content.get('hero_title_primary', 'Securing Your') }} <span>{{ content.get('hero_title_accent', 'Digital Future.') }}</span></h1>
           <div class="hero-capabilities" aria-label="Capabilities: Cyber Security, Security Tools, Blockchain, AI, and Cloud"><span>Cyber Security</span><span class="separator" aria-hidden="true">&bull;</span><span>Security Tools</span><span class="separator" aria-hidden="true">&bull;</span><span>Blockchain</span><span class="separator" aria-hidden="true">&bull;</span><span>AI</span><span class="separator" aria-hidden="true">&bull;</span><span>Cloud</span></div>
           <p>{{ content.get('hero_description', 'AlphaX ZeroTech delivers advanced cybersecurity services to protect your business, data, and digital future with next-generation security technologies.') }}</p>
-          <div class="hero-actions"><a class="button" href="#services">Get Started <span aria-hidden="true">&rarr;</span></a><a class="button secondary" href="{{ url_for('contact.index') }}">Contact Us <span aria-hidden="true">&rarr;</span></a></div>
+          <div class="hero-actions"><a class="button" href="#services">Explore services <span aria-hidden="true">&rarr;</span></a><a class="button secondary" href="{{ url_for('contact.index') }}">Request an audit <span aria-hidden="true">&rarr;</span></a></div>
         </div>
         <div class="hero-art" aria-label="Digital shield protecting a connected network">
           <svg class="network-map" viewBox="0 0 760 440" aria-hidden="true">
@@ -504,7 +505,7 @@
 
   <footer class="site-footer">
     <div class="container footer-grid">
-      <div class="footer-brand"><a class="brand" href="#home"><span class="brand-logo"><img src="../static/images/logo.png?v=official-20260807" alt="AlphaX ZeroTech official logo" width="1536" height="1024"></span><span class="brand-copy"><span class="brand-name"><strong>AlphaX</strong> ZeroTech</span></span></a><p>AlphaX ZeroTech provides advanced cybersecurity services to protect your business, data, and digital future with next-generation technologies.</p><div class="socials"><a href="#" aria-label="Facebook">f</a><a href="#" aria-label="X">x</a><a href="#" aria-label="LinkedIn">in</a><a href="#" aria-label="YouTube">&#9654;</a></div></div>
+      <div class="footer-brand"><a class="brand" href="#home"><span class="brand-logo"><img src="../static/images/logo-transparent.png?v=transparent-20261031" alt="AlphaX ZeroTech official logo" width="1536" height="1024"></span><span class="brand-copy"><span class="brand-name"><strong>AlphaX</strong> ZeroTech</span></span></a><p>AlphaX ZeroTech provides advanced cybersecurity services to protect your business, data, and digital future with next-generation technologies.</p><div class="socials"><a href="#" aria-label="Facebook">f</a><a href="#" aria-label="X">x</a><a href="#" aria-label="LinkedIn">in</a><a href="#" aria-label="YouTube">&#9654;</a></div></div>
       <div class="footer-column"><h3>Quick Links</h3><a href="#home">Home</a><a href="{{ url_for('services.index') }}">Services</a><a href="{{ url_for('security_tools.marketplace') }}">Security Tools</a><a href="{{ url_for('content_hub.threats') }}">Threat Intelligence</a><a href="{{ url_for('content_hub.resources') }}">Resources</a><a href="{{ url_for('content_hub.training') }}">Training</a></div>
       <div class="footer-column"><h3>Services</h3><a href="#services">Web Application Security</a><a href="#services">Network Security</a><a href="#services">Cloud Security</a><a href="#services">Mobile Security</a><a href="#services">Penetration Testing</a><a href="#services">SOC Monitoring</a></div>
       <div class="footer-column"><h3>Contact Us</h3><span class="contact-line"><strong>Address:</strong> Rajapalayam, Virudhunagar, Tamilnadu, India</span><a href="mailto:alphaxzerotech@gmail.com"><strong>Email:</strong> alphaxzerotech@gmail.com</a><span class="contact-line"><strong>Hours:</strong> Mon - Sat: 9:00 AM - 6:00 PM</span></div>

@@ -1,7 +1,7 @@
 <header class="ax-site-header" data-site-header>
   <div class="ax-nav-shell">
     <a class="ax-brand" href="{{ url_for('home.index') }}" aria-label="AlphaX ZeroTech home">
-      <span class="ax-brand-logo"><img src="{{ url_for('static', filename='images/logo.png') }}?v=official-20260807" alt="AlphaX ZeroTech official logo"></span>
+      <span class="ax-brand-logo"><img src="{{ url_for('static', filename='images/logo-transparent.png') }}?v=transparent-20261031" alt="AlphaX ZeroTech official logo"></span>
       <span class="ax-brand-copy"><span class="ax-brand-name"><strong>AlphaX</strong> <b>ZeroTech</b></span><small>SECURE BY INTELLIGENCE</small></span>
     </a>
 
@@ -16,7 +16,6 @@
       <a class="{% if request.path.startswith('/threat-intelligence') or request.path.endswith('threat_intelligence.html') %}active{% endif %}" href="{{ url_for('content_hub.threats') }}">Threat Intelligence</a>
       <a class="{% if request.path.startswith('/resources') or request.path.endswith('resources.html') %}active{% endif %}" href="{{ url_for('content_hub.resources') }}">Resources</a>
       <a class="{% if request.path.startswith('/training') or request.path.endswith('training.html') %}active{% endif %}" href="{{ url_for('content_hub.training') }}">Training</a>
-      <a class="{% if request.path.endswith('pricing.html') %}active{% endif %}" href="/pricing.html">Pricing</a>
       <a class="{% if request.path.startswith('/about') or request.path == '/templates/about.html' %}active{% endif %}" href="{{ url_for('about.index') }}">About Us</a>
       <a class="{% if request.path.startswith('/contact') or request.path == '/templates/contact.html' %}active{% endif %}" href="{{ url_for('contact.index') }}">Contact</a>
     </nav>

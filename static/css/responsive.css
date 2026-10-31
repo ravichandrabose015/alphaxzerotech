@@ -1,0 +1,123 @@
+/* Shared public design layer. Loaded after each page's existing component styles. */
+:root {
+  --ax-ink:#102c22; --ax-green:#257a3e; --ax-lime:#baef72;
+  --ax-paper:#f5f8f2; --ax-muted:#53665d; --ax-line:#dce5d8;
+  --green:var(--ax-green); --green-dark:#1b6030; --green-strong:var(--ax-green);
+  --hub-green:var(--ax-green); --hub-ink:var(--ax-ink); --muted:var(--ax-muted);
+  --ink:var(--ax-ink); --text:var(--ax-ink); --black:var(--ax-ink);
+}
+body { background:var(--ax-paper); color:var(--ax-ink); font-family:Inter,Arial,sans-serif; line-height:1.65; }
+html { scroll-padding-top:100px; }
+*,*::before,*::after { box-sizing:border-box; }
+img { max-width:100%; }
+main :is(h1,h2,h3,p,a) { overflow-wrap:break-word; }
+main :is(input,select,textarea) { min-width:0; max-width:100%; font-size:16px; }
+:is(a,button,input,select,textarea,summary):focus-visible { outline:3px solid #257a3e; outline-offset:4px; }
+body :is(.container,.page-shell) { width:min(1280px,calc(100% - 96px)); }
+body :is(.hero h1,.hub-hero h1,.contact-hero h1,.market-hero h1,.search-page h1) {
+  font-size:clamp(40px,4.6vw,68px); line-height:1.08; letter-spacing:-.045em; white-space:normal;
+}
+body .hero h1 span { font-size:inherit; letter-spacing:inherit; white-space:normal; text-shadow:none; }
+body :is(.hero-copy p,.hub-hero p,.market-hero p) { font-size:18px; line-height:1.75; color:var(--ax-muted); }
+body :is(.section,.hub-library,.search-page) { padding-block:80px; }
+body :is(.section-heading,.split-heading) { text-align:left; }
+body .section-heading p { margin-left:0; }
+body :is(.section-heading h2,.split-heading h2) { font-size:clamp(28px,3.1vw,44px); line-height:1.15; }
+body :is(.button,.hub-button,.submit-enquiry,.primary-link) {
+  min-height:48px; padding:12px 22px; border-radius:10px; background:var(--ax-green);
+  border-color:var(--ax-green); color:white; font-size:15px; font-weight:700; box-shadow:none;
+}
+body :is(.button.secondary,.hub-button.outline) { color:var(--ax-ink); background:white; border:1px solid var(--ax-line); }
+body :is(.button,.hub-button):hover { background:#1b6030; color:white; transform:translateY(-2px); box-shadow:none; }
+body :is(.service-card,.why-card,.matter-card,.about-card,.why-wrap,.detail-panel,.featured-panel,.form-card,.hub-card) {
+  border:1px solid var(--ax-line); border-radius:16px; background:#fff; box-shadow:none;
+}
+body :is(.services-grid,.service-grid) { grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
+body .service-card { align-items:flex-start; text-align:left; padding:28px; min-height:210px; }
+body .service-card h3 { font-size:20px; line-height:1.35; }
+body .service-card p { font-size:15px; }
+body .service-card button { min-height:44px; font-size:14px; }
+body .card-icon { margin-left:0; box-shadow:none; background:#e7f1e2; }
+body .about-grid { grid-template-columns:1fr 1.4fr; }
+body .why-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+body .why-card { text-align:left; padding:24px; }
+body .why-card h4 { font-size:17px; min-height:0; }
+body .why-card p { font-size:14px; }
+body :is(.service-grid article p,.expertise-grid article p,.about-me>p:last-child) { font-size:15px; }
+body :is(.hub-filters,.market-filters) { padding:24px; border-radius:16px; border:1px solid var(--ax-line); background:var(--ax-paper); }
+body .hub-filters { grid-template-columns:repeat(4,minmax(0,1fr)); }
+body :is(.hub-filters,.market-filters) button { min-height:48px; background:var(--ax-green); color:#fff; }
+body .hub-hero { background:linear-gradient(120deg,#f5f8f2,#e7f1e2); }
+body .hub-hero::before { display:none; }
+body .enquiry-layout { grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr); gap:32px; }
+body .contact-hero { background:#0b3023; }
+body .contact-hero h1 { color:white; }
+body .contact-hero .eyebrow { color:var(--ax-lime); }
+body .contact-hero .privacy-pills span { color:#d6edca; }
+body .form-grid { gap:20px; }
+body .form-grid label { font-size:14px; }
+body :is(.hub-empty,.market-empty) { border:1px solid var(--ax-line); background:var(--ax-paper); border-radius:20px; padding:48px 24px; }
+/* Homepage floating security illustration. */
+body.ax-home .hero { min-height:0; background:linear-gradient(115deg,#f5f8f2,#e7f1e2); }
+body.ax-home .hero::before { display:none; }
+body.ax-home .hero-grid { min-height:0; grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr); padding-block:72px; gap:56px; }
+body.ax-home .hero-copy { padding:0; animation:none; }
+body.ax-home .hero-badge { background:#e2eed9; border:0; color:var(--ax-green); }
+body.ax-home .hero-capabilities { flex-wrap:wrap; white-space:normal; font-size:13px; gap:8px; }
+body.ax-home .hero-art { min-height:360px; height:100%; border-radius:0; background:transparent; overflow:visible; padding:0; }
+body.ax-home .network-map { opacity:.22; max-width:100%; }
+body.ax-home .shield-stage { width:min(440px,100%); }
+body.ax-home .shield-svg { width:72%; animation:shieldFloat 4.2s ease-in-out infinite; filter:drop-shadow(0 24px 28px rgba(37,122,62,.22)); }
+
+body.ax-home .page-loader { display:none; }
+body.ax-home .section:nth-child(even) { background:#fff; }
+body.ax-home .reveal { opacity:1; transform:none; }
+@media(max-width:1100px) {
+  body :is(.container,.page-shell) { width:calc(100% - 64px); }
+  body :is(.services-grid,.service-grid,.hub-grid) { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  body .about-grid { grid-template-columns:1fr; }
+  body .hub-filters { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  body.ax-home .hero-grid { gap:32px; }
+  body.ax-home .hero-art { min-height:300px; }
+}
+@media(max-width:760px) {
+  html { scroll-padding-top:80px; }
+  body :is(.container,.page-shell) { width:calc(100% - 40px); }
+  body :is(.section,.hub-library,.search-page) { padding-block:48px; }
+  body :is(.hero h1,.hub-hero h1,.contact-hero h1,.market-hero h1,.search-page h1) { font-size:clamp(34px,9.5vw,48px); }
+  body :is(.hero-copy p,.hub-hero p,.market-hero p) { font-size:16px; }
+  body :is(.hero-grid,.hub-hero-grid,.enquiry-layout,.detail-layout,.hero.page-shell) { grid-template-columns:minmax(0,1fr); }
+  body.ax-home .hero-grid { grid-template-columns:minmax(0,1fr); padding-block:36px; gap:28px; }
+  body.ax-home .hero-art { height:280px; min-height:280px; padding:0; border-radius:0; }
+  body.ax-home .shield-stage { width:260px; }
+  body :is(.hero-actions,.button-row) { display:grid; grid-template-columns:1fr; gap:12px; }
+  body :is(.hero-actions,.button-row) .button { width:100%; }
+  body :is(.services-grid,.service-grid,.why-grid,.hub-grid,.hub-filters,.market-filters,.search-form) { grid-template-columns:minmax(0,1fr); }
+  body .hub-search { grid-column:auto; }
+  body .service-card { min-height:0; padding:24px; }
+  body :is(.about-card,.why-wrap,.detail-panel) { padding:24px; }
+  body .enquiry-layout { padding:36px 20px; }
+  body .form-card { grid-row:1; padding:24px 20px; }
+  body .contact-aside { padding:20px 0; }
+  body .contact-hero { padding:44px 20px; min-height:0; }
+  body .contact-hero .hero-shield { display:none; }
+  body :is(.hub-filters,.market-filters) { padding:20px; }
+  body .hero.page-shell { padding-top:36px; }
+  body .hero-copy { padding:0; }
+  body .hero-art:has(.portrait-wrap) { min-height:330px; }
+  body .portrait-wrap { height:320px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  html { scroll-behavior:auto; }
+  body *,body *::before,body *::after { animation:none!important; transition:none!important; }
+}
+
+/* Dimensional emblems retain a compact mobile presence. */
+body .market-orbit { display:grid; place-items:center; width:min(320px,80vw); height:auto; aspect-ratio:1; border:0; background:transparent; box-shadow:none; perspective:900px; }
+body .market-orbit::before,body .market-orbit::after { display:none; }
+body :is(.market-orbit,.hub-shield) > .ax-dimensional-art { position:relative; z-index:1; width:100%; height:auto; animation:ax-hub-float 6s ease-in-out infinite; filter:drop-shadow(10px 18px 12px rgba(25,95,33,.22)); transform-origin:50% 65%; }
+@keyframes ax-hub-float { 0%,100% { transform:perspective(800px) translateY(0) rotateY(-9deg) rotateX(3deg); } 50% { transform:perspective(800px) translateY(-12px) rotateY(9deg) rotateX(-3deg); } }
+@media(max-width:760px) { body .market-orbit { width:220px; margin:28px auto 0; } }
+@media(prefers-reduced-motion:reduce) { body :is(.market-orbit,.hub-shield) > .ax-dimensional-art { animation:none; transform:none; } }
+
+body .market-hero p { color:#c5d3cb; }

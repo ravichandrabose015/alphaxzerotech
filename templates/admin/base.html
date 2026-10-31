@@ -7,10 +7,11 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/system.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/marketplace.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_content.css') }}?v=20260828-1">
+  {% include 'brand_head.html' %}
 </head>
 <body class="admin-system">
   <aside class="admin-sidebar">
-    <a class="system-brand" href="{{ url_for('admin.dashboard') }}"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="AlphaX ZeroTech"><span><b>AlphaX</b> ZeroTech<small>Administrator Panel</small></span></a>
+    <a class="system-brand" href="{{ url_for('admin.dashboard') }}"><img src="{{ url_for('static', filename='images/logo-transparent.png') }}" alt="AlphaX ZeroTech"><span><b>AlphaX</b> ZeroTech<small>Administrator Panel</small></span></a>
     <nav><span>Workspace</span><a class="{% if request.endpoint == 'admin.dashboard' %}active{% endif %}" href="{{ url_for('admin.dashboard') }}">Overview</a><a class="{% if request.endpoint in ['admin.enquiries','admin.enquiry_details'] %}active{% endif %}" href="{{ url_for('admin.enquiries') }}">Enquiries</a><a class="{% if request.endpoint == 'admin.website_management' %}active{% endif %}" href="{{ url_for('admin.website_management') }}">Website Content</a>{% if current_admin()['role'] == 'super_admin' %}<a class="{% if request.blueprint == 'admin_tools' %}active{% endif %}" href="{{ url_for('admin_tools.index') }}">Security Tools</a><a class="{% if request.blueprint=='admin_content' and request.view_args.get('module')=='threat' %}active{% endif %}" href="{{ url_for('admin_content.index',module='threat') }}">Threat Intelligence</a><a class="{% if request.blueprint=='admin_content' and request.view_args.get('module')=='resource' %}active{% endif %}" href="{{ url_for('admin_content.index',module='resource') }}">Resources</a><a class="{% if request.blueprint=='admin_content' and request.view_args.get('module')=='training' %}active{% endif %}" href="{{ url_for('admin_content.index',module='training') }}">Training</a>{% endif %}<span>Security</span><a class="{% if request.endpoint == 'admin.settings' %}active{% endif %}" href="{{ url_for('admin.settings') }}">Settings & 2FA</a><a href="{{ url_for('home.index') }}" target="_blank">Open Public Website</a></nav>
     <form method="post" action="{{ url_for('admin.logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="sidebar-logout">Sign Out</button></form>
   </aside>

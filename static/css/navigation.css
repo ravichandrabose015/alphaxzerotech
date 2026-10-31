@@ -1,0 +1,37 @@
+.ax-site-header { height:88px; box-shadow:none; border-bottom:1px solid #dce5d8; background:rgba(255,255,255,.97); }
+.ax-site-header::before { display:none; }
+.ax-site-header .ax-nav-shell { width:min(1280px,calc(100% - 64px)); gap:24px; }
+.ax-site-header .ax-brand { min-width:0; gap:12px; }
+.ax-site-header .ax-brand-name { font-size:21px; letter-spacing:-.035em; }
+.ax-site-header .ax-brand-name strong { color:#257a3e; }
+.ax-site-header .ax-brand-copy small { font-size:8px; letter-spacing:.12em; margin-top:6px; }
+.ax-site-header .ax-primary-nav { gap:20px; }
+.ax-site-header .ax-primary-nav a { padding:22px 0; font-size:13px; font-weight:600; }
+.ax-site-header .ax-primary-nav a::after { bottom:12px; background:#257a3e; }
+.ax-site-header .ax-primary-nav a.active,.ax-site-header .ax-primary-nav a:hover { color:#257a3e; text-shadow:none; }
+.ax-site-header .ax-primary-nav a:last-child { padding:14px 20px; border-radius:9px; color:#fff; background:#257a3e; }
+.ax-site-header .ax-primary-nav a:last-child::after { display:none; }
+@media(max-width:1120px) {
+  .ax-site-header { height:76px; }
+  .ax-site-header .ax-nav-shell { width:calc(100% - 40px); }
+  .ax-site-header .ax-primary-nav { top:76px; width:min(400px,100vw); height:calc(100dvh - 76px); gap:4px; padding:24px; visibility:hidden; pointer-events:none; }
+  .ax-site-header .ax-primary-nav.open { visibility:visible; pointer-events:auto; }
+  .ax-site-header .ax-primary-nav a { padding:16px; font-size:16px; border-radius:8px; }
+  .ax-site-header .ax-primary-nav a.active { background:#e7f1e2; }
+  .ax-site-header .ax-primary-nav a:last-child { margin-top:16px; text-align:center; }
+  .ax-nav-toggle { background:#e7f1e2; border:0; }
+}
+@media(max-width:420px) {
+  .ax-site-header .ax-brand-name { font-size:17px; }
+  .ax-site-header .ax-brand-copy small { font-size:7px; }
+  .ax-site-header .ax-nav-shell { gap:12px; }
+}
+
+/* A viewport-fixed header avoids sticky jumps when the menu locks scrolling.
+   No backdrop filter: filtered ancestors capture fixed-position descendants. */
+@media(max-width:1120px) {
+  body:has([data-site-header]) { padding-top:76px; }
+  .ax-site-header { position:fixed; inset:0 0 auto; backdrop-filter:none; -webkit-backdrop-filter:none; }
+  .ax-site-header .ax-primary-nav { overscroll-behavior:contain; padding-bottom:max(24px,env(safe-area-inset-bottom)); }
+  body.ax-nav-open { position:fixed; width:100%; overflow:hidden; }
+}

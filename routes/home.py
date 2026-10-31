@@ -37,11 +37,3 @@ def index_file():
 def services_file():
     from routes.services import index as services_index
     return services_index()
-
-
-@home_blueprint.get("/<path:page_name>.html")
-def static_template_page(page_name):
-    allowed = {"pricing"}
-    if page_name not in allowed:
-        return render_template("404.html"), 404
-    return render_template(f"{page_name}.html")
