@@ -5,6 +5,7 @@ from flask import Flask, render_template
 from config import Config
 from routes.studio import studio
 from database.studio import init_studio
+from database.editorial_refresh import refresh_editorial
 from database.database import init_app as init_database
 from database.marketplace_database import init_app as init_marketplace_database
 from database.website_content import seed_content
@@ -46,6 +47,7 @@ def create_app(test_config=None) -> Flask:
     with application.app_context():
         seed_content()
         init_studio()
+        refresh_editorial()
     application.jinja_env.globals["now_year"] = datetime.now().year
 
     @application.get("/healthz")

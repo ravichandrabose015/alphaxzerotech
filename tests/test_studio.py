@@ -59,7 +59,7 @@ def test_unsafe_links_rejected(app,source):
     result = client.post('/admin/studio/edit/0?kind=news', data={'csrf_token':csrf,'title':'Link','source':source})
     assert result.status_code==200 and b'HTTPS' in result.data
     with app.app_context():
-        assert get_db().execute("SELECT count(*) FROM studio_items WHERE kind='news'").fetchone()[0]==0
+        assert get_db().execute("SELECT count(*) FROM studio_items WHERE kind='news' AND json_extract(draft,'$.title')='Link'").fetchone()[0]==0
 
 def test_logout_invalidates_stolen_cookie(app):
     client = login(app)
@@ -127,7 +127,7 @@ def test_import_deduplicates_and_does_not_resurrect_deleted(app,monkeypatch):
     with app.app_context():
         assert import_cisa()==1
         assert import_cisa()==0
-        row=get_db().execute("SELECT * FROM studio_items WHERE kind='news'").fetchone()
+        row=get_db().execute("SELECT * FROM studio_items WHERE kind='news' AND json_extract(draft,'$.title')='Test advisory'").fetchone()
         assert row['published'] is None
         get_db().execute('UPDATE studio_items SET deleted=1 WHERE id=?',(row['id'],))
         get_db().commit()
