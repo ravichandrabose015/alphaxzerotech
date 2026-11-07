@@ -1,6 +1,7 @@
 from datetime import date
+from pathlib import Path
 
-from flask import Blueprint, abort, redirect, render_template, request, send_file, url_for
+from flask import Blueprint, abort, current_app, redirect, render_template, request, send_file, url_for
 
 from database.content_hub import (
     get_public_item, global_search, increment_download, list_public_items, public_taxonomy, related_items,
@@ -16,6 +17,17 @@ MODULES = {
     "resource": {"title": "Resources", "template": "resources.html", "prefix": "resources"},
     "training": {"title": "Training", "template": "training.html", "prefix": "training"},
 }
+
+
+def _resolve_content_path(relative_path):
+    """Resolve generated static downloads or protected admin uploads safely."""
+    if isinstance(relative_path, str) and relative_path.startswith("/static/downloads/"):
+        static_root = Path(current_app.static_folder).resolve()
+        candidate = (static_root / relative_path.removeprefix("/static/")).resolve()
+        if static_root not in candidate.parents:
+            raise FileNotFoundError(relative_path)
+        return candidate
+    return resolve_upload(relative_path)
 
 
 def _collections(module, items):
@@ -45,7 +57,7 @@ def _collections(module, items):
     return [(label, records[:3]) for label, records in groups if records]
 
 
-def _page(module):
+def _page(module, resource_type="", page_title="", page_text=""):
     query = request.args.get("q", "").strip()[:120]
     category = request.args.get("category", "").strip()[:120]
     tag = request.args.get("tag", "").strip()[:80]
@@ -62,6 +74,7 @@ def _page(module):
         "featured": request.args.get("featured", "").strip(),
         "date_from": date_from,
         "cvss": request.args.get("cvss", "").strip(),
+        "resource_type": resource_type,
     }
     try:
         all_items = list_public_items(module, query, category, tag, sort, filters)
@@ -79,11 +92,11 @@ def _page(module):
     items = all_items[(current_page - 1) * per_page:current_page * per_page]
     collections = _collections(module, all_items)
     return render_template(
-        MODULES[module]["template"], module=module, module_title=MODULES[module]["title"], items=items,
+        MODULES[module]["template"], module=module, module_title=page_title or MODULES[module]["title"], items=items,
         categories=categories, tags=tags, query=query, selected_category=category, selected_tag=tag,
         selected_sort=sort, filters=filters, database_ready=database_ready,
         current_page=current_page, total_pages=total_pages,
-        collections=collections,
+        collections=collections, resource_view_title=page_title, resource_view_text=page_text,
     )
 
 
@@ -101,9 +114,35 @@ def resources():
     return _page("resource")
 
 
+@content_hub_blueprint.get("/research")
+def research():
+    return _page("resource", "research paper", "Security Research", "Recent security research with clear defensive context and links to original papers.")
+
+
+@content_hub_blueprint.get("/blog")
+def blog():
+    return _page("resource", "blog", "Cybersecurity Blog", "Practical guidance written for security teams, developers, learners and business owners.")
+
+
+@content_hub_blueprint.get("/case-studies")
+def case_studies():
+    return _page("resource", "case study", "Security Case Studies", "Realistic defensive scenarios, decisions, outcomes and lessons learned.")
+
+
+@content_hub_blueprint.get("/news")
+def news():
+    return _page("resource", "news", "Security News", "Verified cybersecurity, crypto, PHP, Java and GitHub security updates with source links.")
+
+
+@content_hub_blueprint.get("/downloads")
+def downloads():
+    return _page("resource", "security guide", "Security Awareness Downloads", "Practical awareness checklists and knowledge guides prepared by AlphaX ZeroTech.")
+
+
 @content_hub_blueprint.get("/templates/training.html")
 @content_hub_blueprint.get("/training.html")
 @content_hub_blueprint.get("/training")
+@content_hub_blueprint.get("/courses")
 def training():
     return _page("training")
 
@@ -140,7 +179,7 @@ def media(relative_path):
     if len(parts) < 3 or parts[0] not in MODULES or parts[1] not in {"thumbnail", "banner", "gallery", "screenshots"}:
         abort(404)
     try:
-        path = resolve_upload(relative_path)
+        path = _resolve_content_path(relative_path)
     except FileNotFoundError:
         abort(404)
     if not path.is_file():
@@ -174,7 +213,7 @@ def download(module, slug, asset_key, index):
     record = records[index]
     relative_path = record.get("path") if isinstance(record, dict) else record
     try:
-        path = resolve_upload(relative_path)
+        path = _resolve_content_path(relative_path)
     except FileNotFoundError:
         abort(404)
     if not path.is_file():
@@ -207,7 +246,7 @@ def view_asset(module, slug, asset_key, index):
     record = records[index]
     relative_path = record.get("path") if isinstance(record, dict) else record
     try:
-        path = resolve_upload(relative_path)
+        path = _resolve_content_path(relative_path)
     except FileNotFoundError:
         abort(404)
     if not path.is_file():

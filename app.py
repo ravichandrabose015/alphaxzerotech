@@ -6,6 +6,8 @@ from config import Config
 from database.database import init_app as init_database
 from database.marketplace_database import init_app as init_marketplace_database
 from database.website_content import seed_content
+from database.catalog_seed import seed_starter_catalog
+from database.marketplace_database import MarketplaceUnavailable
 from routes.about import about_blueprint
 from routes.admin import admin_blueprint
 from routes.admin_tools import admin_tools_blueprint
@@ -42,6 +44,10 @@ def create_app(test_config=None) -> Flask:
     init_firewall(application)
     with application.app_context():
         seed_content()
+        try:
+            seed_starter_catalog()
+        except MarketplaceUnavailable:
+            pass
     application.jinja_env.globals["now_year"] = datetime.now().year
 
     @application.errorhandler(400)

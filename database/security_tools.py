@@ -152,19 +152,21 @@ def create_tool(data: dict, files: dict, admin_id: int):
                 name, slug, thumbnail_path, banner_path, gallery_paths,
                 short_description, full_description, version, category,
                 price_cents, currency, license_name, operating_system, platform,
+                repository_url, download_url, documentation_url, install_guide,
                 tool_file_path, tool_file_name, tool_file_sha256,
                 documentation_path, screenshot_paths, release_notes, status,
                 is_featured, is_pinned, display_order, created_by, updated_by,
                 published_at
             ) VALUES (
                 %s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s,
-                %s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,
+                %s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,
                 CASE WHEN %s THEN NOW() ELSE NULL END
             ) RETURNING *""",
             (
                 data["name"], slug, files["thumbnail"], files["banner"], json.dumps(files["gallery"]),
                 data["short_description"], data["full_description"], data["version"], data["category"],
                 data["price_cents"], data["currency"], data["license_name"], data["operating_system"], data["platform"],
+                data["repository_url"], data["download_url"], data["documentation_url"], data["install_guide"],
                 files["tool_file"], files["tool_file_name"], files["tool_file_sha256"], files["documentation"],
                 json.dumps(files["screenshots"]), data["release_notes"], data["status"], data["is_featured"],
                 data["is_pinned"], data["display_order"], admin_id, admin_id, published,
@@ -196,6 +198,7 @@ def update_tool(tool_id: int, data: dict, files: dict, admin_id: int):
                 name=%s, slug=%s, thumbnail_path=%s, banner_path=%s, gallery_paths=%s::jsonb,
                 short_description=%s, full_description=%s, version=%s, category=%s,
                 price_cents=%s, currency=%s, license_name=%s, operating_system=%s, platform=%s,
+                repository_url=%s, download_url=%s, documentation_url=%s, install_guide=%s,
                 tool_file_path=%s, tool_file_name=%s, tool_file_sha256=%s,
                 documentation_path=%s, screenshot_paths=%s::jsonb, release_notes=%s,
                 status=%s, is_featured=%s, is_pinned=%s, display_order=%s,
@@ -207,6 +210,7 @@ def update_tool(tool_id: int, data: dict, files: dict, admin_id: int):
                 data["name"], slug, merged["thumbnail"], merged["banner"], json.dumps(list(merged["gallery"])),
                 data["short_description"], data["full_description"], data["version"], data["category"],
                 data["price_cents"], data["currency"], data["license_name"], data["operating_system"], data["platform"],
+                data["repository_url"], data["download_url"], data["documentation_url"], data["install_guide"],
                 merged["tool_file"], merged["tool_file_name"], merged["tool_file_sha256"], merged["documentation"],
                 json.dumps(list(merged["screenshots"])), data["release_notes"], data["status"], data["is_featured"],
                 data["is_pinned"], data["display_order"], admin_id, data["status"], data["status"], tool_id,

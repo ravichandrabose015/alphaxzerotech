@@ -14,6 +14,10 @@ CREATE TABLE IF NOT EXISTS security_tools (
     license_name VARCHAR(160) NOT NULL,
     operating_system VARCHAR(180) NOT NULL,
     platform VARCHAR(180) NOT NULL,
+    repository_url TEXT NOT NULL DEFAULT '',
+    download_url TEXT NOT NULL DEFAULT '',
+    documentation_url TEXT NOT NULL DEFAULT '',
+    install_guide TEXT NOT NULL DEFAULT '',
     tool_file_path TEXT NOT NULL,
     tool_file_name TEXT NOT NULL,
     tool_file_sha256 CHAR(64) NOT NULL,
@@ -34,6 +38,11 @@ CREATE TABLE IF NOT EXISTS security_tools (
     published_at TIMESTAMPTZ,
     deleted_at TIMESTAMPTZ
 );
+
+ALTER TABLE security_tools ADD COLUMN IF NOT EXISTS repository_url TEXT NOT NULL DEFAULT '';
+ALTER TABLE security_tools ADD COLUMN IF NOT EXISTS download_url TEXT NOT NULL DEFAULT '';
+ALTER TABLE security_tools ADD COLUMN IF NOT EXISTS documentation_url TEXT NOT NULL DEFAULT '';
+ALTER TABLE security_tools ADD COLUMN IF NOT EXISTS install_guide TEXT NOT NULL DEFAULT '';
 
 CREATE INDEX IF NOT EXISTS idx_security_tools_public
     ON security_tools(status, is_pinned DESC, display_order, published_at DESC);

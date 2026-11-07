@@ -18,7 +18,7 @@ def index():
         marketplace_ready = True
     except MarketplaceUnavailable:
         tool_groups = {"featured": [], "latest": [], "popular": []}
-        hub_groups = {"threats": [], "featured_resources": [], "blogs": [], "whitepapers": [], "courses": [], "featured_courses": []}
+        hub_groups = {"threats": [], "featured_resources": [], "blogs": [], "whitepapers": [], "news": [], "research": [], "case_studies": [], "downloads": [], "courses": [], "featured_courses": []}
         marketplace_ready = False
     return render_template(
         "index.html", content=content_for_page("home"),

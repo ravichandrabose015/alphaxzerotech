@@ -11,6 +11,8 @@ __pycache__/
 uploads/
 logs/
 backups/
+output/
+tmp/
 .vscode/
 *.pem
 *.key

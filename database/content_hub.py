@@ -78,6 +78,9 @@ def list_public_items(module, query="", category="", tag="", sort="latest", filt
         elif field == "cvss" and value:
             clauses.append("metadata->>'cvss_score'=%s")
             parameters.append(value[:12])
+        elif field == "resource_type" and value and module == "resource":
+            clauses.append("LOWER(metadata->>'resource_type')=%s")
+            parameters.append(value[:80].lower())
     order = {
         "popular": "is_pinned DESC, view_count DESC, download_count DESC, published_at DESC NULLS LAST",
         "title": "is_pinned DESC, title ASC",
@@ -142,6 +145,10 @@ def homepage_content(limit=4):
         "featured_resources": _metadata_group("resource", featured=True, limit=limit),
         "blogs": _metadata_group("resource", "blog", limit=limit),
         "whitepapers": _metadata_group("resource", "whitepaper", featured=True, limit=limit),
+        "news": _metadata_group("resource", "news", limit=limit),
+        "research": _metadata_group("resource", "research paper", limit=limit),
+        "case_studies": _metadata_group("resource", "case study", limit=limit),
+        "downloads": _metadata_group("resource", "security guide", limit=limit),
         "courses": list_public_items("training", sort="latest", limit=limit),
         "featured_courses": _metadata_group("training", featured=True, limit=limit),
     }

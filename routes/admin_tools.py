@@ -16,20 +16,20 @@ admin_tools_blueprint = Blueprint("admin_tools", __name__, url_prefix="/admin/se
 
 
 def _save_form_files(creating=False):
-    thumbnail = save_upload(request.files.get("thumbnail"), "thumbnail", required=creating)
-    banner = save_upload(request.files.get("banner"), "banner", required=creating)
-    tool_file = save_upload(request.files.get("tool_file"), "tool_file", required=creating)
-    documentation = save_upload(request.files.get("documentation"), "documentation", required=creating)
-    gallery = save_multiple(request.files.getlist("gallery_images"), "gallery", required=creating)
-    screenshots = save_multiple(request.files.getlist("screenshots"), "screenshots", required=creating)
+    thumbnail = save_upload(request.files.get("thumbnail"), "thumbnail")
+    banner = save_upload(request.files.get("banner"), "banner")
+    tool_file = save_upload(request.files.get("tool_file"), "tool_file")
+    documentation = save_upload(request.files.get("documentation"), "documentation")
+    gallery = save_multiple(request.files.getlist("gallery_images"), "gallery")
+    screenshots = save_multiple(request.files.getlist("screenshots"), "screenshots")
     return {
-        "thumbnail": thumbnail["path"] if thumbnail else None,
-        "banner": banner["path"] if banner else None,
+        "thumbnail": thumbnail["path"] if thumbnail else ("/static/images/tools/default.svg" if creating else None),
+        "banner": banner["path"] if banner else ("/static/images/tools/default.svg" if creating else None),
         "gallery": gallery,
-        "tool_file": tool_file["path"] if tool_file else None,
-        "tool_file_name": tool_file["name"] if tool_file else None,
-        "tool_file_sha256": tool_file["sha256"] if tool_file else None,
-        "documentation": documentation["path"] if documentation else None,
+        "tool_file": tool_file["path"] if tool_file else ("" if creating else None),
+        "tool_file_name": tool_file["name"] if tool_file else ("" if creating else None),
+        "tool_file_sha256": tool_file["sha256"] if tool_file else ("" if creating else None),
+        "documentation": documentation["path"] if documentation else ("" if creating else None),
         "screenshots": screenshots,
     }
 

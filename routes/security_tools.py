@@ -69,6 +69,8 @@ def download(slug):
         abort(404)
     if tool["price_cents"] > 0:
         abort(403, description="Purchase verification is required before download.")
+    if tool.get("download_url"):
+        return redirect(tool["download_url"])
     try:
         file_path = resolve_upload(tool["tool_file_path"])
     except FileNotFoundError:

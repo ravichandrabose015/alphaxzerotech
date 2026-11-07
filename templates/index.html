@@ -254,6 +254,14 @@
     .matter-card p { margin: 0; color: var(--muted); font-size: .72rem; }
 
     .marketplace-home { padding: 78px 0; background: #f7faf8; }
+    .news-ticker { position: relative; z-index: 30; overflow: hidden; border-bottom: 1px solid rgba(15,106,47,.15); background: linear-gradient(90deg,#f2faef,#fff,#f2faef); }
+    .news-ticker-inner { width: min(1480px,calc(100% - 40px)); min-height: 44px; display: flex; align-items: center; margin: auto; overflow: hidden; }
+    .news-live { flex: 0 0 auto; margin-right: 20px; padding: 5px 10px; border-radius: 999px; color: #fff; background: #d92d20; font-size: .66rem; font-weight: 850; letter-spacing: .08em; }
+    .news-track { width: max-content; display: flex; align-items: center; animation: newsScroll 34s linear infinite; }
+    .news-track:hover { animation-play-state: paused; }
+    .news-track a { display: inline-flex; align-items: center; color: #21412b; font-size: .74rem; font-weight: 700; white-space: nowrap; }
+    .news-track a::after { margin: 0 20px; color: #35ad2c; content: "•"; }
+    @keyframes newsScroll { to { transform: translateX(-50%); } }
     .home-tool-section + .home-tool-section { margin-top: 42px; }
     .home-tool-section h3 { margin: 0 0 18px; font-size: 1.22rem; }
     .home-tools-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
@@ -389,6 +397,8 @@
 
   {% include "navbar.html" %}
 
+  {% if content_hub_groups.news %}<aside class="news-ticker" aria-label="Latest security news"><div class="news-ticker-inner"><span class="news-live">LIVE</span><div class="news-track">{% for copy in range(2) %}{% for item in content_hub_groups.news %}<a href="{{ url_for('content_hub.resource_detail',slug=item.slug) }}" {% if copy %}aria-hidden="true" tabindex="-1"{% endif %}>{{ item.title }}</a>{% endfor %}{% endfor %}</div></div></aside>{% endif %}
+
   <main>
     <section class="hero" id="home">
       <div class="container hero-grid">
@@ -475,9 +485,9 @@
     <section class="marketplace-home content-home" id="published-content">
       <div class="container">
         <div class="section-heading reveal"><span class="section-label">Knowledge & Intelligence</span><h2>Latest Admin-Published <span>Content</span></h2><p>Live content from the AlphaX ZeroTech PostgreSQL publishing system.</p></div>
-        {% set has_hub_content = content_hub_groups.threats or content_hub_groups.featured_resources or content_hub_groups.blogs or content_hub_groups.whitepapers or content_hub_groups.courses or content_hub_groups.featured_courses %}
+        {% set has_hub_content = content_hub_groups.threats or content_hub_groups.news or content_hub_groups.research or content_hub_groups.case_studies or content_hub_groups.downloads or content_hub_groups.blogs or content_hub_groups.whitepapers or content_hub_groups.courses or content_hub_groups.featured_courses %}
         {% if has_hub_content %}
-          {% for group_key, group_label, endpoint in [('threats','Latest Threat Intelligence','content_hub.threat_detail'),('featured_resources','Featured Resources','content_hub.resource_detail'),('blogs','Latest Blogs','content_hub.resource_detail'),('whitepapers','Featured Whitepapers','content_hub.resource_detail'),('courses','Latest Courses','content_hub.training_detail'),('featured_courses','Featured Courses','content_hub.training_detail')] %}{% set group_items=content_hub_groups[group_key] %}{% if group_items %}<div class="home-tool-section reveal"><h3>{{ group_label }}</h3><div class="hub-grid">{% for item in group_items %}<article class="hub-card compact"><div class="hub-card-body"><div class="hub-card-meta"><span>{{ item.category }}</span><span>{{ item.published_at.strftime('%d %b %Y') if item.published_at else '' }}</span></div><h3>{{ item.title }}</h3><p>{{ item.short_description }}</p><a class="hub-text-link" href="{{ url_for(endpoint,slug=item.slug) }}">View details &rarr;</a></div></article>{% endfor %}</div></div>{% endif %}{% endfor %}
+          {% for group_key, group_label, endpoint in [('threats','Latest Threat Intelligence','content_hub.threat_detail'),('news','Latest Security News','content_hub.resource_detail'),('research','Recent Research','content_hub.resource_detail'),('case_studies','Case Studies','content_hub.resource_detail'),('downloads','Awareness Downloads','content_hub.resource_detail'),('blogs','Latest Blogs','content_hub.resource_detail'),('courses','Latest Courses','content_hub.training_detail')] %}{% set group_items=content_hub_groups[group_key] %}{% if group_items %}<div class="home-tool-section reveal"><h3>{{ group_label }}</h3><div class="hub-grid">{% for item in group_items %}<article class="hub-card compact"><div class="hub-card-body"><div class="hub-card-meta"><span>{{ item.category }}</span><span>{{ item.published_at.strftime('%d %b %Y') if item.published_at else '' }}</span></div><h3>{{ item.title }}</h3><p>{{ item.short_description }}</p><a class="hub-text-link" href="{{ url_for(endpoint,slug=item.slug) }}">View details &rarr;</a></div></article>{% endfor %}</div></div>{% endif %}{% endfor %}
         {% else %}<div class="home-market-empty reveal"><h3>No Content Available Yet</h3><p>New threat intelligence, resources and training content will be published soon.</p></div>{% endif %}
       </div>
     </section>
@@ -489,7 +499,7 @@
         {% if has_marketplace_tools %}
           {% for group_key, group_label in [('featured','Featured Published Tools'),('latest','Latest Published Tools'),('popular','Popular Published Tools')] %}
             {% set group_tools = marketplace_groups[group_key] %}
-            {% if group_tools %}<div class="home-tool-section reveal"><h3>{{ group_label }}</h3><div class="home-tools-grid">{% for tool in group_tools %}<article class="home-tool-card"><a href="{{ url_for('security_tools.product',slug=tool.slug) }}"><img src="{{ url_for('security_tools.media',relative_path=tool.thumbnail_path) }}" alt="{{ tool.name }} thumbnail" loading="lazy"></a><div class="home-tool-body"><div class="home-tool-meta"><span>{{ tool.category }}</span><span>v{{ tool.version }}</span></div><h4><a href="{{ url_for('security_tools.product',slug=tool.slug) }}">{{ tool.name }}</a></h4><p>{{ tool.short_description }}</p><div class="home-tool-footer"><strong>{{ 'Free' if tool.price_cents==0 else tool.currency ~ ' ' ~ '%.2f'|format(tool.price_cents/100) }}</strong><a href="{{ url_for('security_tools.product',slug=tool.slug) }}">View Tool &rarr;</a></div></div></article>{% endfor %}</div></div>{% endif %}
+            {% if group_tools %}<div class="home-tool-section reveal"><h3>{{ group_label }}</h3><div class="home-tools-grid">{% for tool in group_tools %}<article class="home-tool-card"><a href="{{ url_for('security_tools.product',slug=tool.slug) }}"><img src="{{ tool.thumbnail_path if tool.thumbnail_path.startswith('/static/') else url_for('security_tools.media',relative_path=tool.thumbnail_path) }}" alt="{{ tool.name }} thumbnail" loading="lazy"></a><div class="home-tool-body"><div class="home-tool-meta"><span>{{ tool.category }}</span><span>v{{ tool.version }}</span></div><h4><a href="{{ url_for('security_tools.product',slug=tool.slug) }}">{{ tool.name }}</a></h4><p>{{ tool.short_description }}</p><div class="home-tool-footer"><strong>{{ 'Open Source' if tool.price_cents==0 else tool.currency ~ ' ' ~ '%.2f'|format(tool.price_cents/100) }}</strong><a href="{{ url_for('security_tools.product',slug=tool.slug) }}">View Guide &rarr;</a></div></div></article>{% endfor %}</div></div>{% endif %}
           {% endfor %}
         {% else %}
           <div class="home-market-empty reveal"><h3>No Security Tools Available Yet</h3><p>New security tools will be published soon.</p></div>

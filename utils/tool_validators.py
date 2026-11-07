@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 from database.security_tools import ADMIN_STATUSES, price_to_cents
 
 
@@ -16,6 +18,10 @@ def validate_tool_form(form, creating=True):
         "license_name": clean(form.get("license_name"), 160),
         "operating_system": clean(form.get("operating_system"), 180),
         "platform": clean(form.get("platform"), 180),
+        "repository_url": clean(form.get("repository_url"), 1000),
+        "download_url": clean(form.get("download_url"), 1000),
+        "documentation_url": clean(form.get("documentation_url"), 1000),
+        "install_guide": clean(form.get("install_guide"), 20000),
         "release_notes": clean(form.get("release_notes"), 10000),
         "status": clean(form.get("status"), 20) or "draft",
         "is_featured": form.get("is_featured") == "1",
@@ -27,7 +33,7 @@ def validate_tool_form(form, creating=True):
         "full_description": "Full description", "version": "Version",
         "category": "Category", "license_name": "License",
         "operating_system": "Operating system", "platform": "Platform",
-        "release_notes": "Release notes",
+        "release_notes": "Release notes", "install_guide": "Installation guide",
     }
     for key, label in required.items():
         if not data[key]:
@@ -36,6 +42,15 @@ def validate_tool_form(form, creating=True):
         errors.append("Choose a valid tool status.")
     if len(data["currency"]) != 3 or not data["currency"].isalpha():
         errors.append("Currency must be a three-letter code.")
+    for field, label in (
+        ("repository_url", "Repository URL"),
+        ("download_url", "Official download URL"),
+        ("documentation_url", "Documentation URL"),
+    ):
+        if data[field]:
+            parsed = urlparse(data[field])
+            if parsed.scheme != "https" or not parsed.netloc:
+                errors.append(f"{label} must be a valid HTTPS URL.")
     try:
         data["price_cents"] = price_to_cents(form.get("price", "0"))
     except ValueError as error:
