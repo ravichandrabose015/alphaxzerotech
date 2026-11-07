@@ -40,7 +40,12 @@ def control(screen):
         db=get_db()
         ids={r['id'] for r in db.execute('SELECT id FROM studio_items WHERE published IS '+('NULL' if status=='draft' else 'NOT NULL')).fetchall()}
         records=[item for item in records if item['id'] in ids]
-    return render_template('studio/control.html',screen=screen,heading=title,records=records,kinds=kinds,query=query,history=get_db().execute('SELECT * FROM studio_history ORDER BY id DESC LIMIT 30').fetchall())
+    trash=[]
+    if screen=='publish':
+        for row in get_db().execute('SELECT id,kind,draft,revision FROM studio_items WHERE deleted=1 ORDER BY id DESC').fetchall():
+            trash.append(dict(json.loads(row['draft']),id=row['id'],kind=row['kind'],revision=row['revision']))
+    history=get_db().execute('SELECT h.*, i.revision, i.deleted FROM studio_history h JOIN studio_items i ON i.id=h.item_id ORDER BY h.id DESC LIMIT 30').fetchall()
+    return render_template('studio/control.html',screen=screen,heading=title,records=records,kinds=kinds,query=query,history=history,trash=trash)
 
 def media_root():
     root = Path(current_app.config['CONTENT_HUB_UPLOAD_ROOT']) / 'studio'
@@ -217,15 +222,15 @@ def edit(item_id):
 @super_admin_required
 def action(item_id,action):
     validate_csrf()
-    if action not in ('publish','hide','show','remove'):
+    if action not in ('publish','hide','show','remove','restore','unpublish'):
         abort(400)
     db = get_db()
-    row = db.execute('SELECT * FROM studio_items WHERE id=? AND deleted=0',(item_id,)).fetchone()
+    row = db.execute('SELECT * FROM studio_items WHERE id=? AND deleted=?',(item_id,int(action=='restore'))).fetchone()
     if not row:
         abort(404)
     if row['kind']=='settings' and action!='publish':
         abort(400)
-    fields = {'publish':'published=draft','hide':'hidden=1','show':'hidden=0','remove':'deleted=1'}
+    fields = {'publish':'published=draft','hide':'hidden=1','show':'hidden=0','remove':'deleted=1','restore':'deleted=0,hidden=1','unpublish':'published=NULL'}
     cursor = db.execute('UPDATE studio_items SET '+fields[action]+',revision=revision+1 WHERE id=? AND revision=?',(item_id,request.form.get('revision',type=int)))
     if cursor.rowcount!=1:
         db.rollback()
@@ -233,4 +238,21 @@ def action(item_id,action):
     record(item_id,action,row['draft'],current_admin()['id'])
     db.commit()
     flash('Content '+action+' completed.','success')
-    return redirect(url_for('studio.index'))
+    return redirect(url_for('studio.control',screen='publish'))
+
+@studio.post('/admin/studio/<int:item_id>/revision/<int:history_id>/restore')
+@super_admin_required
+def restore_revision(item_id,history_id):
+    validate_csrf()
+    db=get_db()
+    historical=db.execute('SELECT payload FROM studio_history WHERE id=? AND item_id=?',(history_id,item_id)).fetchone()
+    if not historical:
+        abort(404)
+    cursor=db.execute('UPDATE studio_items SET draft=?,revision=revision+1 WHERE id=? AND revision=? AND deleted=0',(historical['payload'],item_id,request.form.get('revision',type=int)))
+    if cursor.rowcount!=1:
+        db.rollback()
+        abort(409,description='Reload the latest revision before restoring.')
+    record(item_id,'revision_restored_to_draft',historical['payload'],current_admin()['id'])
+    db.commit()
+    flash('Version restored as a private draft. Preview before publishing.','success')
+    return redirect(url_for('studio.edit',item_id=item_id))
