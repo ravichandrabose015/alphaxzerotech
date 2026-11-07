@@ -132,3 +132,17 @@ def test_import_deduplicates_and_does_not_resurrect_deleted(app,monkeypatch):
         get_db().execute('UPDATE studio_items SET deleted=1 WHERE id=?',(row['id'],))
         get_db().commit()
         assert import_cisa()==0
+
+
+def test_approved_public_page_families_and_admin_screens(app):
+    public=app.test_client()
+    for path in ['/pages/company','/pages/service','/other-services','/pages/course','/training-enquiry?course=Web+Security','/pages/tool','/pages/threat','/pages/resource','/pages/news','/read/2','/read/10','/read/14']:
+        assert public.get(path).status_code==200,path
+    owner=login(app)
+    from routes.studio import CONTROL_SCREENS
+    for screen in CONTROL_SCREENS:
+        path='/admin/control/'+screen
+        assert public.get(path).status_code==302,path
+        response=owner.get(path)
+        assert response.status_code==200,path
+        assert CONTROL_SCREENS[screen][0] in __import__("html").unescape(response.get_data(as_text=True))

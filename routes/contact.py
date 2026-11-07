@@ -53,6 +53,9 @@ def index():
         service = request.args.get("service", "")
         if service:
             values = {"service_interested": service if service in SERVICES else "Other", "subject": request.args.get("subject", service)[:160]}
+    training_course = request.args.get('course','').strip()[:120] if request.path=='/training-enquiry' else ''
+    if training_course and request.method=='GET':
+        values={'service_interested':'Other','subject':'Training enquiry: '+training_course}
     tool_name = request.args.get("tool", "").strip()[:180]
     if request.method == "GET" and tool_name:
         values = {
@@ -73,5 +76,5 @@ def index():
     return render_template(
         "contact.html", **context(), errors=errors, values=values,
         services=sorted(SERVICES), contact_methods=sorted(CONTACT_METHODS),
-        contact_times=sorted(CONTACT_TIMES), content=content_for_page("contact"),
+        contact_times=sorted(CONTACT_TIMES), content=({"page_title":"Training Enquiry","page_description":"Enquire about a specific course. We will get in touch with next steps."} if request.path=="/training-enquiry" else content_for_page("contact")),
     )

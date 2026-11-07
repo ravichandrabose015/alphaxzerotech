@@ -11,6 +11,37 @@ from security.csrf import validate_csrf
 
 studio = Blueprint('studio', __name__)
 
+CONTROL_SCREENS = {
+    'pages': ('Page Builder', ('settings',)),
+    'ticker': ('Ticker & OTC Settings', ('settings',)),
+    'services': ('Company & Services', ('company','service')),
+    'brand': ('Menus & Brand', ('settings','menu','logo')),
+    'news': ('News Manager', ('news',)),
+    'imports': ('Threat Import Inbox', ('news','threat')),
+    'sources': ('Source Controls', ()),
+    'tools': ('Tools Manager', ('tool',)),
+    'courses': ('Courses & Lessons', ('course',)),
+    'resources': ('Resources & Downloads', ('blog','research','download')),
+    'motion': ('Motion Settings', ('settings',)),
+    'publish': ('Preview / Publish / History', KINDS),
+}
+
+@studio.get('/admin/control/<screen>')
+@super_admin_required
+def control(screen):
+    if screen not in CONTROL_SCREENS:
+        abort(404)
+    title,kinds=CONTROL_SCREENS[screen]
+    rows=items(preview=True)
+    query=request.args.get('q','').strip()[:120]
+    records=[item for item in rows if item['kind'] in kinds and query.casefold() in item.get('title','').casefold()]
+    status=request.args.get('status','')
+    if status:
+        db=get_db()
+        ids={r['id'] for r in db.execute('SELECT id FROM studio_items WHERE published IS '+('NULL' if status=='draft' else 'NOT NULL')).fetchall()}
+        records=[item for item in records if item['id'] in ids]
+    return render_template('studio/control.html',screen=screen,heading=title,records=records,kinds=kinds,query=query,history=get_db().execute('SELECT * FROM studio_history ORDER BY id DESC LIMIT 30').fetchall())
+
 def media_root():
     root = Path(current_app.config['CONTENT_HUB_UPLOAD_ROOT']) / 'studio'
     root.mkdir(parents=True, exist_ok=True)
@@ -48,16 +79,38 @@ def context(preview=False):
 
 @studio.get('/pages/<kind>')
 def listing(kind):
-    if kind not in KINDS or kind in ('settings','logo'):
+    if kind not in (*KINDS,'resource') or kind in ('settings','logo','menu'):
         abort(404)
-    return render_template('studio/listing.html', kind=kind, **context())
+    ctx=context()
+    records=ctx['groups'].get(kind,[])
+    if kind=='resource':
+        records=sum((ctx['groups'][key] for key in ('blog','research','download')),[])
+    query=request.args.get('q','').strip()[:120]
+    category=request.args.get('category','').strip()[:80]
+    level=request.args.get('level','').strip()[:40]
+    categories=sorted({item.get('category','General') for item in records})
+    records=[item for item in records if query.casefold() in (item.get('title','')+' '+item.get('summary','')).casefold() and (not category or item.get('category','General')==category) and (not level or item.get('level','Beginner')==level)]
+    template='studio/company.html' if kind=='company' else 'studio/catalogue.html'
+    return render_template(template,kind=kind,records=records,query=query,categories=categories,selected_category=category,selected_level=level,**ctx)
+
+def detail_template(item):
+    return {'service':'studio/service_detail.html','course':'studio/course_detail.html','tool':'studio/tool_detail.html','threat':'studio/advisory_detail.html','news':'studio/advisory_detail.html'}.get(item['kind'],'studio/detail.html')
+
+@studio.get('/other-services')
+def other_services():
+    return render_template('studio/otc.html',**context())
+
+@studio.route('/training-enquiry',methods=['GET','POST'])
+def training_enquiry():
+    from routes.contact import index
+    return index()
 
 @studio.get('/read/<int:item_id>')
 def detail(item_id):
     item = next((i for i in items() if i['id']==item_id and i['kind'] not in ('settings','logo')), None)
     if not item:
         abort(404)
-    return render_template('studio/detail.html', item=item, **context())
+    return render_template(detail_template(item), item=item, **context())
 
 @studio.get('/read/<int:item_id>/download')
 def download(item_id):
@@ -82,10 +135,10 @@ def preview_item(item_id):
     item = next((i for i in items(preview=True) if i['id']==item_id),None)
     if not item:
         abort(404)
-    return render_template('studio/detail.html', item=item, **context(True))
+    return render_template(detail_template(item), item=item, **context(True))
 
 def clean_payload(form, kind):
-    data = {key: form.get(key,'').strip() for key in ('title','summary','body','source','image','label','email','location','ticker','hero','otc_title','otc_description','otc_button','phone','social','maps')}
+    data = {key: form.get(key,'').strip() for key in ('title','summary','body','source','image','label','email','location','ticker','hero','otc_title','otc_description','otc_button','phone','social','maps','category','level','scope','deliverables','faq','curriculum','outcomes','features','usecases','affected','impact','mitigation')}
     if not data['title'] or len(data['title'])>180 or any(len(value)>20000 for value in data.values()):
         raise ValueError('Provide a title (up to 180 characters) and content within 20,000 characters.')
     for key in ('social','maps'):
