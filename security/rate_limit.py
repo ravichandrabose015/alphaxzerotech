@@ -1,30 +1,32 @@
 from collections import defaultdict, deque
 from functools import wraps
-from threading import Lock
-from time import monotonic
-
+from time import time
 from flask import abort, request
+from database.database import get_db
 
+_events = defaultdict(deque)  # Retained for existing test integrations.
 
-_events = defaultdict(deque)
-_lock = Lock()
-
-
-def rate_limit(max_requests: int, window_seconds: int):
+def rate_limit(max_requests, window_seconds):
     def decorator(view):
         @wraps(view)
         def wrapped(*args, **kwargs):
-            forwarded = request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
-            identity = forwarded or request.remote_addr or "unknown"
-            key = f"{view.__module__}.{view.__name__}:{identity}"
-            now = monotonic()
-            with _lock:
-                queue = _events[key]
-                while queue and now - queue[0] > window_seconds:
-                    queue.popleft()
-                if len(queue) >= max_requests:
-                    abort(429, description="Too many requests. Please try again shortly.")
-                queue.append(now)
+            # Do not trust caller-provided forwarding headers.
+            identity = request.remote_addr or 'unknown'
+            key = f'{view.__module__}.{view.__name__}:{identity}'
+            now = time()
+            db = get_db()
+            db.execute('BEGIN IMMEDIATE')
+            try:
+                db.execute('DELETE FROM security_limits WHERE stamp < ?', (now-3600,))
+                count = db.execute('SELECT count(*) FROM security_limits WHERE bucket=? AND stamp>?', (key,now-window_seconds)).fetchone()[0]
+                if count >= max_requests:
+                    db.rollback()
+                    abort(429, description='Too many requests. Please try again shortly.')
+                db.execute('INSERT INTO security_limits VALUES (?,?)', (key,now))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
             return view(*args, **kwargs)
         return wrapped
     return decorator

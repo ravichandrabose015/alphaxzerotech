@@ -38,7 +38,7 @@ def _client_information() -> dict:
     else:
         browser = "Other Browser"
     device = "Mobile" if re.search(r"mobile|android|iphone", lowered) else "Tablet" if "ipad" in lowered else "Desktop"
-    forwarded = request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+    forwarded = ""
     return {"ip": forwarded or request.remote_addr or "Unknown", "browser": browser, "os": operating_system, "device": device}
 
 
@@ -49,6 +49,10 @@ def _client_information() -> dict:
 def index():
     errors = {}
     values = {}
+    if request.method == "GET":
+        service = request.args.get("service", "")
+        if service:
+            values = {"service_interested": service if service in SERVICES else "Other", "subject": request.args.get("subject", service)[:160]}
     tool_name = request.args.get("tool", "").strip()[:180]
     if request.method == "GET" and tool_name:
         values = {
@@ -65,8 +69,9 @@ def index():
             enquiry_id = create_enquiry(values, _client_information())
             flash(f"Your enquiry {enquiry_id} was submitted securely. Our team will contact you soon.", "success")
             return redirect(url_for("contact.index"))
+    from routes.studio import context
     return render_template(
-        "contact.html", errors=errors, values=values,
+        "contact.html", **context(), errors=errors, values=values,
         services=sorted(SERVICES), contact_methods=sorted(CONTACT_METHODS),
         contact_times=sorted(CONTACT_TIMES), content=content_for_page("contact"),
     )

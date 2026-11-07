@@ -1,29 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Send a secure cyber security enquiry to AlphaX ZeroTech.">
-  <title>Contact Our Security Experts | AlphaX ZeroTech</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/system.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}?v=20260828-6">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/security_visual.css') }}?v=20261030-1">
-  {% include 'brand_head.html' %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}?v=20261031">
-</head>
-<body class="public-system-page">
-  {% include "navbar.html" %}
-
-  <main>
-    <section class="contact-hero">
-      <div><span class="eyebrow">Secure Public Enquiry</span><h1>{{ content.get('page_title', 'Talk to Our Security Experts') }}</h1><p>{{ content.get('page_description', 'Send a secure enquiry and our cyber security team will contact you using your preferred method.') }}</p><div class="privacy-pills"><span>No User Login</span><span>No Registration</span><span>Encrypted Workflow</span></div></div>
-      <div class="hero-shield" aria-hidden="true">{% with visual_kind='contact' %}{% include 'security_visual.html' %}{% endwith %}<span>Enterprise-grade enquiry protection</span></div>
-    </section>
-
-    <section class="enquiry-layout">
+{% extends 'studio/layout.html' %}{% block title %}Contact · {{ site.title }}{% endblock %}{% block content %}<link rel="stylesheet" href="/static/css/system.css"><section class="section page-intro"><span class="eyebrow">LET'S START A CONVERSATION</span><h1>{{ content.get('page_title','Talk to our team.') }}</h1><p>{{ site.email }} · {{ site.location }}</p></section>    <section class="enquiry-layout">
       <aside class="contact-aside">
         <span class="eyebrow">AlphaX ZeroTech</span><h2>Start a security conversation.</h2><p>Share your requirements through our protected form. Your enquiry is logged securely and is visible only to authorized administrators.</p>
         <div class="assurance-list"><div><b>01</b><span><strong>Secure Submission</strong>Your enquiry is validated and protected.</span></div><div><b>02</b><span><strong>Expert Review</strong>Our security team reviews your requirements.</span></div><div><b>03</b><span><strong>Private Follow-up</strong>We respond using your preferred method.</span></div></div>
@@ -52,8 +27,4 @@
         </form>
       </div>
     </section>
-  </main>
-  <footer class="system-footer"><span>&copy; {{ now_year }} AlphaX ZeroTech. All rights reserved.</span></footer>
-  <script src="{{ url_for('static', filename='js/navbar.js') }}?v=20260828-1" defer></script>
-</body>
-</html>
+{% endblock %}

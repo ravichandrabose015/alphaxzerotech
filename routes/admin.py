@@ -1,9 +1,10 @@
 import csv
 import io
 import secrets
+import hmac
 
 from flask import (
-    Blueprint, Response, flash, redirect, render_template, request, session, url_for,
+    Blueprint, Response, abort, current_app, flash, redirect, render_template, request, session, url_for,
 )
 
 from database.activity_logs import recent_logs, write_log
@@ -16,7 +17,8 @@ from database.enquiries import (
     soft_delete_enquiry, update_enquiry,
 )
 from database.website_content import all_content, update_content
-from security.auth import admin_required, current_admin
+from security.auth import admin_required, current_admin, open_session, revoke_sessions
+from database.database import get_db
 from security.csrf import validate_csrf
 from security.otp import generate_secret, provisioning_uri, verify_code
 from security.rate_limit import rate_limit
@@ -27,7 +29,7 @@ admin_blueprint = Blueprint("admin", __name__, url_prefix="/admin")
 
 
 def client_ip() -> str:
-    forwarded = request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+    forwarded = ""
     return forwarded or request.remote_addr or "Unknown"
 
 
@@ -41,6 +43,11 @@ def audit(action, entity_type="admin", entity_id=None, details=""):
 def setup():
     if admin_count() > 0:
         return redirect(url_for("admin.login"))
+    if not current_app.testing:
+        expected = current_app.config.get("SETUP_TOKEN", "")
+        supplied = request.form.get("setup_token", "")
+        if not expected or (request.method == "POST" and not hmac.compare_digest(expected, supplied)):
+            abort(404)
     errors = []
     if request.method == "POST":
         validate_csrf()
@@ -78,6 +85,7 @@ def login():
         else:
             session.clear()
             session["admin_user_id"] = admin["id"]
+            open_session(admin["id"])
             session["csrf_token"] = secrets.token_urlsafe(32)
             session.permanent = request.form.get("remember_me") == "1"
             record_login(admin["id"])
@@ -91,6 +99,7 @@ def login():
 def logout():
     validate_csrf()
     audit("logout")
+    revoke_sessions(current_admin()["id"])
     session.clear()
     return redirect(url_for("admin.login"))
 
@@ -158,7 +167,7 @@ def export_enquiries():
     columns = ["enquiry_id", "full_name", "company_name", "email_address", "phone_number", "country", "service_interested", "subject", "message", "preferred_contact_method", "preferred_contact_time", "visitor_ip_address", "submission_date_time", "browser_information", "operating_system", "device_type", "status", "admin_notes", "last_updated_time", "deleted_status"]
     writer.writerow(columns)
     for row in rows:
-        writer.writerow([row[column] for column in columns])
+        writer.writerow([("'" + str(row[column])) if str(row[column] or "").lstrip().startswith(("=", "+", "-", "@")) else row[column] for column in columns])
     audit("enquiries_exported", "enquiry", details=f"Rows: {len(rows)}")
     return Response(output.getvalue(), mimetype="text/csv", headers={"Content-Disposition": "attachment; filename=alphax-enquiries.csv"})
 
@@ -180,11 +189,19 @@ def website_management():
 @admin_required
 def settings():
     admin = current_admin()
-    setup_secret = session.get("pending_2fa_secret")
+    pending = get_db().execute("SELECT secret FROM admin_pending_mfa WHERE admin_id=?", (admin["id"],)).fetchone()
+    setup_secret = pending["secret"] if pending else None
     setup_uri = provisioning_uri(setup_secret, admin["username"]) if setup_secret else None
     if request.method == "POST":
         validate_csrf()
         action = request.form.get("action")
+        if action in ("password", "disable_2fa", "start_2fa"):
+            if not authenticate_admin(admin["username"], request.form.get("current_password", "")):
+                flash("Enter your current password to change security settings.", "error")
+                return redirect(url_for("admin.settings"))
+            if admin["two_factor_enabled"] and not verify_code(admin["two_factor_secret"], request.form.get("otp", "")):
+                flash("Enter your current authenticator code.", "error")
+                return redirect(url_for("admin.settings"))
         if action == "password":
             errors = validate_password(request.form.get("new_password", ""))
             if request.form.get("new_password") != request.form.get("confirm_password"):
@@ -195,15 +212,19 @@ def settings():
             else:
                 update_password(admin["id"], request.form["new_password"])
                 audit("password_changed")
+                revoke_sessions(admin["id"])
+                session.clear()
                 flash("Password updated.", "success")
         elif action == "start_2fa":
-            session["pending_2fa_secret"] = generate_secret()
+            get_db().execute("INSERT OR REPLACE INTO admin_pending_mfa VALUES (?,?)", (admin["id"],generate_secret()))
+            get_db().commit()
             flash("Enter the secret into your authenticator, then verify a code.", "warning")
         elif action == "enable_2fa":
-            secret = session.get("pending_2fa_secret", "")
+            secret = setup_secret
             if secret and verify_code(secret, request.form.get("otp", "")):
                 set_two_factor(admin["id"], secret, True)
-                session.pop("pending_2fa_secret", None)
+                get_db().execute("DELETE FROM admin_pending_mfa WHERE admin_id=?", (admin["id"],))
+                get_db().commit()
                 audit("two_factor_enabled")
                 flash("Two-factor authentication enabled.", "success")
             else:

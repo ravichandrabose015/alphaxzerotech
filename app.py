@@ -3,6 +3,8 @@ from datetime import datetime
 from flask import Flask, render_template
 
 from config import Config
+from routes.studio import studio
+from database.studio import init_studio
 from database.database import init_app as init_database
 from database.marketplace_database import init_app as init_marketplace_database
 from database.website_content import seed_content
@@ -27,6 +29,7 @@ def create_app(test_config=None) -> Flask:
     if test_config:
         application.config.update(test_config)
     application.register_blueprint(home_blueprint)
+    application.register_blueprint(studio)
     application.register_blueprint(about_blueprint)
     application.register_blueprint(services_blueprint)
     application.register_blueprint(contact_blueprint)
@@ -42,7 +45,12 @@ def create_app(test_config=None) -> Flask:
     init_firewall(application)
     with application.app_context():
         seed_content()
+        init_studio()
     application.jinja_env.globals["now_year"] = datetime.now().year
+
+    @application.get("/healthz")
+    def health():
+        return {"status": "ok"}
 
     @application.errorhandler(400)
     def bad_request(error):
@@ -62,4 +70,4 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)

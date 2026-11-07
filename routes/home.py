@@ -12,19 +12,9 @@ home_blueprint = Blueprint("home", __name__)
 @home_blueprint.get("/")
 def index():
     """Render the AlphaX ZeroTech home page."""
-    try:
-        tool_groups = homepage_groups()
-        hub_groups = homepage_content()
-        marketplace_ready = True
-    except MarketplaceUnavailable:
-        tool_groups = {"featured": [], "latest": [], "popular": []}
-        hub_groups = {"threats": [], "featured_resources": [], "blogs": [], "whitepapers": [], "courses": [], "featured_courses": []}
-        marketplace_ready = False
-    return render_template(
-        "index.html", content=content_for_page("home"),
-        marketplace_groups=tool_groups, marketplace_ready=marketplace_ready,
-        content_hub_groups=hub_groups,
-    )
+    from routes.studio import context
+    return render_template("studio/home.html", **context())
+
 
 
 @home_blueprint.get("/index.html")

@@ -6,7 +6,7 @@ PHONE_PATTERN = re.compile(r"^[0-9+() .-]{7,24}$")
 SERVICES = {
     "Web Application Security", "Network Security", "Cloud Security",
     "Mobile Security", "API Security", "Security Audit",
-    "Penetration Testing", "SOC Monitoring", "Other",
+    "Penetration Testing", "SOC Monitoring", "Other", "OTC Digital Asset Services",
 }
 CONTACT_METHODS = {"Email", "Phone", "WhatsApp", "Video Call"}
 CONTACT_TIMES = {"Morning", "Afternoon", "Evening", "Any Time"}

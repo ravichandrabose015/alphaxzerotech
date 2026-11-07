@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: alphaxzerotech
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --workers 1 --threads 4 --bind 0.0.0.0:$PORT app:app
+    healthCheckPath: /healthz
+    disk:
+      name: alphax-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: ALPHAX_SECRET_KEY
+        generateValue: true
+      - key: ALPHAX_SETUP_TOKEN
+        generateValue: true
+      - key: ALPHAX_HTTPS
+        value: '1'
+      - key: ALPHAX_DATABASE
+        value: /var/data/alphax.db
+      - key: ALPHAX_TOOL_UPLOAD_ROOT
+        value: /var/data/tools
+      - key: ALPHAX_CONTENT_UPLOAD_ROOT
+        value: /var/data/content
+      - key: ALPHAX_POSTGRES_URL
+        sync: false
